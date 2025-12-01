@@ -73,8 +73,8 @@ class AppState: ObservableObject {
                 case .success(let stats):
                     self?.dashboardStats = stats
                 case .failure(let error):
+                    self?.showAlert(title: "Error", message: error.localizedDescription)
                     break
-                self?.showAlert(title: "Error", message: error.localizedDescription)
                 }
                 group.leave()
             }
@@ -88,8 +88,8 @@ class AppState: ObservableObject {
                 case .success(let runs):
                     self?.recentRuns = runs
                 case .failure(let error):
+                    // Handle error appropriately in production
                     break
-                // Handle error appropriately in production
                 }
                 group.leave()
             }
@@ -103,8 +103,8 @@ class AppState: ObservableObject {
                 case .success(let protocols):
                     self?.protocols = protocols
                 case .failure(let error):
+                    // Handle error appropriately in production
                     break
-                // Handle error appropriately in production
                 }
                 group.leave()
             }
@@ -172,8 +172,10 @@ class AppState: ObservableObject {
             switch result {
             case .success:
                 // Cleaning run started successfully
+                break
             case .failure(let error):
                 self?.showAlert(title: "Error", message: "Failed to start cleaning run: \(error.localizedDescription)")
+                break
             }
         }
         
@@ -213,8 +215,10 @@ class AppState: ObservableObject {
             switch result {
             case .success:
                 // Step completed successfully
+                break
             case .failure(let error):
                 self?.showAlert(title: "Error", message: "Failed to complete step: \(error.localizedDescription)")
+                break
             }
         }
         
@@ -248,9 +252,10 @@ class AppState: ObservableObject {
                     self?.activeCleaningRun = nil
                     self?.currentStepIndex = 0
                     self?.refreshDashboardData()
-                case .failure(let error):
                     break
-                self?.showAlert(title: "Error", message: "Failed to complete cleaning run: \(error.localizedDescription)")
+                case .failure(let error):
+                    self?.showAlert(title: "Error", message: "Failed to complete cleaning run: \(error.localizedDescription)")
+                    break
                 }
             }
         }

@@ -140,6 +140,7 @@ struct ScannerView: View {
                 // Handle successful scan
                 break
             case .failure(let error):
+                // Scanning error - Log in production
                 print("Scanning error: \(error)")
                     VStack(spacing: 8) {
                         Image(systemName: mode.icon)
@@ -338,121 +339,6 @@ class QRScannerUIView: UIView {
     
     deinit {
         qrManager.stopScanning()
-    }
-        self.qrManager = qrManager
-        self.onResult = onResult
-        super.init(frame: .zero)
-        setupScanner()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setupScanner() {
-        qrManager.startScanning { [weak self] result in
-            DispatchQueue.main.async {
-                self?.onResult(result)
-            }
-        }
-        
-        setupPreviewLayer()
-        setupOverlay()
-    }
-    
-    private func setupPreviewLayer() {
-        guard let previewLayer = qrManager.getPreviewLayer() else { return }
-        
-        previewLayer.frame = bounds
-        previewLayer.videoGravity = .resizeAspectFill
-        layer.addSublayer(previewLayer)
-        
-        self.previewLayer = previewLayer
-    }
-    
-    private func setupOverlay() {
-        let overlay = UIView()
-        overlay.backgroundColor = UIColor.black.withAlphaComponent(0.3)
-        
-        // Create scanning frame
-        let frameSize: CGFloat = 250
-        let frameView = UIView()
-        frameView.frame = CGRect(
-            x: (bounds.width - frameSize) / 2,
-            y: (bounds.height - frameSize) / 2,
-            width: frameSize,
-            height: frameSize
-        )
-        frameView.layer.borderColor = UIColor.systemCyan.cgColor
-        frameView.layer.borderWidth = 3
-        frameView.layer.cornerRadius = 20
-        frameView.backgroundColor = UIColor.clear
-        
-        // Add corner markers
-        addCornerMarkers(to: frameView)
-        
-        overlay.addSubview(frameView)
-        overlay.frame = bounds
-        overlay.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        
-        addSubview(overlay)
-        overlayView = overlay
-    }
-    
-    private func addCornerMarkers(to view: UIView) {
-        let cornerLength: CGFloat = 30
-        let cornerWidth: CGFloat = 4
-        let cornerColor = UIColor.systemCyan
-        
-        // Top-left corner
-        let topLeft = UIView()
-        topLeft.frame = CGRect(x: 0, y: 0, width: cornerLength, height: cornerWidth)
-        topLeft.backgroundColor = cornerColor
-        view.addSubview(topLeft)
-        
-        let topLeftVertical = UIView()
-        topLeftVertical.frame = CGRect(x: 0, y: 0, width: cornerWidth, height: cornerLength)
-        topLeftVertical.backgroundColor = cornerColor
-        view.addSubview(topLeftVertical)
-        
-        // Top-right corner
-        let topRight = UIView()
-        topRight.frame = CGRect(x: view.frame.width - cornerLength, y: 0, width: cornerLength, height: cornerWidth)
-        topRight.backgroundColor = cornerColor
-        view.addSubview(topRight)
-        
-        let topRightVertical = UIView()
-        topRightVertical.frame = CGRect(x: view.frame.width - cornerWidth, y: 0, width: cornerWidth, height: cornerLength)
-        topRightVertical.backgroundColor = cornerColor
-        view.addSubview(topRightVertical)
-        
-        // Bottom-left corner
-        let bottomLeft = UIView()
-        bottomLeft.frame = CGRect(x: 0, y: view.frame.height - cornerWidth, width: cornerLength, height: cornerWidth)
-        bottomLeft.backgroundColor = cornerColor
-        view.addSubview(bottomLeft)
-        
-        let bottomLeftVertical = UIView()
-        bottomLeftVertical.frame = CGRect(x: 0, y: view.frame.height - cornerLength, width: cornerWidth, height: cornerLength)
-        bottomLeftVertical.backgroundColor = cornerColor
-        view.addSubview(bottomLeftVertical)
-        
-        // Bottom-right corner
-        let bottomRight = UIView()
-        bottomRight.frame = CGRect(x: view.frame.width - cornerLength, y: view.frame.height - cornerWidth, width: cornerLength, height: cornerWidth)
-        bottomRight.backgroundColor = cornerColor
-        view.addSubview(bottomRight)
-        
-        let bottomRightVertical = UIView()
-        bottomRightVertical.frame = CGRect(x: view.frame.width - cornerWidth, y: view.frame.height - cornerLength, width: cornerWidth, height: cornerLength)
-        bottomRightVertical.backgroundColor = cornerColor
-        view.addSubview(bottomRightVertical)
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        previewLayer?.frame = bounds
-        overlayView?.frame = bounds
     }
 }
 

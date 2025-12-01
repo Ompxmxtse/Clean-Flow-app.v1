@@ -65,13 +65,19 @@ class FirestoreRepository {
                     let cleaningProtocol = try self.decoder.decode(CleaningProtocol.self, from: document.data())
                     protocols.append(cleaningProtocol)
                 } catch {
+                    // Protocol Decoding Error - Log in production
                     print("🟥 Protocol Decoding Error for document \(document.documentID): \(error)")
                     decodingErrors.append(error)
                 }
             }
             
             if protocols.isEmpty && !decodingErrors.isEmpty {
-                completion(.failure(decodingErrors.first!))
+                if let firstError = decodingErrors.first {
+                    completion(.failure(firstError))
+                } else {
+                    completion(.failure(NSError(domain: "FirestoreError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unknown decoding error"])))
+                }
+                return
             } else {
                 completion(.success(protocols))
             }
@@ -122,6 +128,7 @@ class FirestoreRepository {
                 snapshot?.documents.forEach { document in
                     do {
                         let run = try self.decoder.decode(CleaningRun.self, from: document.data())
+                // Warning: Failed to decode documents - Log in production
                 print("🟡 Warning: Failed to decode \(decodingErrors.count) of today's cleaning runs out of \(snapshot?.documents.count ?? 0)")
             }
             
@@ -153,6 +160,7 @@ class FirestoreRepository {
                     let run = try self.decoder.decode(CleaningRun.self, from: document.data())
                     runs.append(run)
                 } catch {
+                    // Real-time Cleaning Run Decoding Error - Log in production
                     print("🟥 Real-time Cleaning Run Decoding Error for document \(document.documentID): \(error)")
                     decodingErrors.append(error)
                 }
@@ -160,6 +168,7 @@ class FirestoreRepository {
             
             // If we have any decoding errors, log them but still return successfully decoded runs
             if !decodingErrors.isEmpty {
+                // Warning: Failed to decode real-time cleaning runs - Log in production
                 print("🟡 Warning: Failed to decode \(decodingErrors.count) real-time cleaning runs out of \(snapshot?.documents.count ?? 0)")
             }
             
@@ -192,7 +201,9 @@ class FirestoreRepository {
     // MARK: - Dashboard Statistics
     func fetchDashboardStats(completion: @escaping (Result<DashboardStats, Error>) -> Void) {
         let today = Calendar.current.startOfDay(for: Date())
-        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+        guard let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today) else {
+            return TimeInterval(24 * 60 * 60) // Fallback to 24 hours
+        }
         
         db.collection("runs")
             .whereField("completedAt", isGreaterThanOrEqualTo: today)
@@ -213,6 +224,7 @@ class FirestoreRepository {
                         runs.append(run)
                     }
                 } catch {
+                    // Dashboard Stats Cleaning Run Decoding Error - Log in production
                     print("🟥 Dashboard Stats Cleaning Run Decoding Error for document \(document.documentID): \(error)")
                     decodingErrors.append(error)
                 }
@@ -220,6 +232,7 @@ class FirestoreRepository {
             
             // If we have any decoding errors, log them but still return successfully decoded runs
             if !decodingErrors.isEmpty {
+                // Warning: Failed to decode dashboard stats cleaning runs - Log in production
                 print("🟡 Warning: Failed to decode \(decodingErrors.count) dashboard stats cleaning runs out of \(snapshot?.documents.count ?? 0)")
             }
             
@@ -250,9 +263,8 @@ class FirestoreRepository {
     }
     
     private func calculateNextAuditIn() -> TimeInterval {
-        // Mock calculation - in real app, this would check audit schedule
-        let nextAuditDate = Calendar.current.date(byAdding: .day, value: 7, to: Date())!
-        return nextAuditDate.timeIntervalSince(Date())
+        // Return next audit in 24 hours for now
+        return 24 * 60 * 60 // 24 hours
     }
 }
 

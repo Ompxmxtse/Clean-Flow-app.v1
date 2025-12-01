@@ -397,3 +397,4 @@ struct EmptyPersonnelView: View {
     PersonnelView()
         .environmentObject(AppState())
 }
+}

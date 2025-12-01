@@ -73,14 +73,8 @@ class ScannerService: NSObject, ObservableObject {
     
     // MARK: - NFC Scanner
     @available(iOS 13.0, *)
-            return
-        }
-        
-        qrCompletion = completion
-        
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.setupCaptureSession()
-        }
+    func startNFCScanning(completion: @escaping (Result<ScanResult, Error>) -> Void) {
+        // Implementation for NFC scanning
     }
     
     func stopQRScanning() {

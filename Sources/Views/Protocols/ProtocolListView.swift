@@ -50,8 +50,8 @@ struct ProtocolListView: View {
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .sheet(isPresented: $showingProtocolDetail) {
-            if let protocol = selectedProtocol {
-                ProtocolDetailView(protocol: protocol)
+            if let cleaningProtocol = selectedProtocol {
+                ProtocolDetailView(cleaningProtocol: cleaningProtocol)
             }
         }
         .onAppear {
@@ -125,9 +125,9 @@ struct ProtocolListView: View {
     private var protocolList: some View {
         ScrollView {
             LazyVStack(spacing: 16) {
-                ForEach(viewModel.filteredProtocols) { protocol in
-                    ProtocolCard(protocol: protocol) {
-                        selectedProtocol = protocol
+                ForEach(viewModel.filteredProtocols) { cleaningProtocol in
+                    ProtocolCard(cleaningProtocol: cleaningProtocol) {
+                        selectedProtocol = cleaningProtocol
                         showingProtocolDetail = true
                     }
                 }

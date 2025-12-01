@@ -2,8 +2,6 @@ import SwiftUI
 
 struct StaffDetailView: View {
     let user: User
-struct StaffDetailView: View {
-    let user: User
     @StateObject private var viewModel: StaffDetailViewModel
     @Environment(\.dismiss) var dismiss
     @State private var showingEditProfile = false
@@ -13,9 +11,6 @@ struct StaffDetailView: View {
         self.user = user
         _viewModel = StateObject(wrappedValue: StaffDetailViewModel(user: user))
     }
-    @Environment(\.dismiss) var dismiss
-    @State private var showingEditProfile = false
-    @State private var showingActivityHistory = false
     
     var body: some View {
         NavigationView {

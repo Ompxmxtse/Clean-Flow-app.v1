@@ -292,12 +292,4 @@ class DashboardUITests: XCTestCase {
             XCTAssertTrue(firstCard.isHittable)
         }
     }
-        if firstCard.exists {
-            XCTAssertTrue(firstCard.isHittable)
-        }
-    }
-        if firstCard.exists {
-            XCTAssertTrue(firstCard.isHittable)
-        }
-    }
 }

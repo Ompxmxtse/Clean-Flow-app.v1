@@ -179,6 +179,7 @@ struct CleaningRunWorkflow: View {
                     impactFeedback.impactOccurred()
                 case .failure(let error):
                     // Show error appropriately in production
+                    break
                 }
             }
         }
@@ -326,6 +327,7 @@ struct ScanningPhaseView: View {
             }
         case .failure(let error):
             // Handle QR scan error appropriately in production
+            break
         }
     }
 }
@@ -372,7 +374,7 @@ struct ProtocolSelectionPhaseView: View {
 
 // MARK: - Active Protocol Phase View
 struct ActiveProtocolPhaseView: View {
-    let protocol: CleaningProtocol
+    let cleaningProtocol: CleaningProtocol
     let scanResult: ScanResult
     @Binding var completedSteps: Set<String>
     @Binding var stepNotes: [String: String]
