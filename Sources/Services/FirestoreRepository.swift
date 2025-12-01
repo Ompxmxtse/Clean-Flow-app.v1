@@ -1,6 +1,6 @@
 import Foundation
 import FirebaseFirestore
-import FirebaseFirestoreSwift
+// import FirebaseFirestoreSwift // Will add later
 
 class FirestoreRepository {
     static let shared = FirestoreRepository()
@@ -28,21 +28,20 @@ class FirestoreRepository {
         }
     }
     
-    func fetchUser(uid: String, completion: @escaping (Result<User, Error>) -> Void) {
-        db.collection("users").document(uid).getDocument { snapshot, error in
+    func getUser(id: String, completion: @escaping (Result<User?, Error>) -> Void) {
+        db.collection("users").document(id).getDocument { document, error in
             if let error = error {
-                print("🟥 Firestore User Fetch Error: \(error.localizedDescription)")
                 completion(.failure(error))
                 return
             }
             
-            guard let data = snapshot?.data() else {
-                completion(.failure(NSError(domain: "Firestore", code: 404, userInfo: [NSLocalizedDescriptionKey: "User not found"])))
+            guard let document = document, document.exists else {
+                completion(.success(nil))
                 return
             }
             
             do {
-                let user = try self.decoder.decode(User.self, from: data)
+                let user = try self.decoder.decode(User.self, from: document.data())
                 completion(.success(user))
             } catch {
                 completion(.failure(error))
@@ -50,21 +49,9 @@ class FirestoreRepository {
         }
     }
     
-    // MARK: - Cleaning Protocol Operations
-    func saveProtocol(_ protocol: CleaningProtocol, completion: @escaping (Result<Void, Error>) -> Void) {
-        do {
-            try db.collection("protocols").document(protocol.id).setData(from: protocol, merge: true)
-            completion(.success(()))
-        } catch {
-            completion(.failure(error))
-        }
-    }
-    
-    func fetchProtocols(completion: @escaping (Result<[CleaningProtocol], Error>) -> Void) {
-        db.collection("protocols")
-            .whereField("isActive", isEqualTo: true)
-            .order(by: "name")
-            .getDocuments { snapshot, error in
+    // MARK: - Protocol Operations
+    func getProtocols(completion: @escaping (Result<[CleaningProtocol], Error>) -> Void) {
+        db.collection("protocols").getDocuments { snapshot, error in
             if let error = error {
                 completion(.failure(error))
                 return
@@ -75,89 +62,66 @@ class FirestoreRepository {
             
             snapshot?.documents.forEach { document in
                 do {
-                    let protocol = try self.decoder.decode(CleaningProtocol.self, from: document.data())
-                    protocols.append(protocol)
+                    let cleaningProtocol = try self.decoder.decode(CleaningProtocol.self, from: document.data())
+                    protocols.append(cleaningProtocol)
                 } catch {
                     print("🟥 Protocol Decoding Error for document \(document.documentID): \(error)")
                     decodingErrors.append(error)
                 }
             }
             
-            // If we have any decoding errors, log them but still return successfully decoded protocols
-            if !decodingErrors.isEmpty {
-                print("🟡 Warning: Failed to decode \(decodingErrors.count) protocols out of \(snapshot?.documents.count ?? 0)")
+            if protocols.isEmpty && !decodingErrors.isEmpty {
+                completion(.failure(decodingErrors.first!))
+            } else {
+                completion(.success(protocols))
             }
-            
-            completion(.success(protocols))
         }
     }
     
-    func fetchCleaningRuns(for userId: String? = nil, limit: Int = 50, completion: @escaping (Result<[CleaningRun], Error>) -> Void) {
-        var query: Query = db.collection("runs")
-            .order(by: "completedAt", descending: true)
+    func saveProtocol(_ cleaningProtocol: CleaningProtocol, completion: @escaping (Result<Void, Error>) -> Void) {
+        do {
+            try db.collection("protocols").document(cleaningProtocol.id).setData(from: cleaningProtocol, merge: true) { error in
+                if let error = error {
+                    completion(.failure(error))
+                } else {
+                    completion(.success(()))
+                }
+            }
+        } catch {
+            completion(.failure(error))
+        }
+    }
+    
+    // MARK: - Cleaning Run Operations
+    func saveCleaningRun(_ run: CleaningRun, completion: @escaping (Result<Void, Error>) -> Void) {
+        do {
+            try db.collection("cleaningRuns").document(run.id).setData(from: run, merge: true) { error in
+                if let error = error {
+                    completion(.failure(error))
+                } else {
+                    completion(.success(()))
+                }
+            }
+        } catch {
+            completion(.failure(error))
+        }
+    }
+    
+    func getRecentRuns(limit: Int = 10, completion: @escaping (Result<[CleaningRun], Error>) -> Void) {
+        db.collection("cleaningRuns")
+            .order(by: "startTime", descending: true)
             .limit(to: limit)
-        
-        if let userId = userId {
-            query = query.whereField("userId", isEqualTo: userId)
-        }
-        
-        query.getDocuments { snapshot, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            
-            var runs: [CleaningRun] = []
-            var decodingErrors: [Error] = []
-            
-            snapshot?.documents.forEach { document in
-                do {
-                    let run = try self.decoder.decode(CleaningRun.self, from: document.data())
-                    runs.append(run)
-                } catch {
-                    print("🟥 Cleaning Run Decoding Error for document \(document.documentID): \(error)")
-                    decodingErrors.append(error)
-                }
-            }
-            
-            // If we have any decoding errors, log them but still return successfully decoded runs
-            if !decodingErrors.isEmpty {
-                print("🟡 Warning: Failed to decode \(decodingErrors.count) cleaning runs out of \(snapshot?.documents.count ?? 0)")
-            }
-            
-            completion(.success(runs))
-        }
-    }
-    
-    func fetchCleaningRunsToday(completion: @escaping (Result<[CleaningRun], Error>) -> Void) {
-        let today = Calendar.current.startOfDay(for: Date())
-        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
-        
-        db.collection("runs")
-            .whereField("completedAt", isGreaterThanOrEqualTo: today)
-            .whereField("completedAt", isLessThan: tomorrow)
-            .order(by: "completedAt", descending: true)
             .getDocuments { snapshot, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            
-            var runs: [CleaningRun] = []
-            var decodingErrors: [Error] = []
-            
-            snapshot?.documents.forEach { document in
-                do {
-                    let run = try self.decoder.decode(CleaningRun.self, from: document.data())
-                    runs.append(run)
-                } catch {
-                    print("🟥 Today's Cleaning Run Decoding Error for document \(document.documentID): \(error)")
-                    decodingErrors.append(error)
+                if let error = error {
+                    completion(.failure(error))
+                    return
                 }
-            }
-            
-            // If we have any decoding errors, log them but still return successfully decoded runs
-            if !decodingErrors.isEmpty {
+                
+                var runs: [CleaningRun] = []
+                
+                snapshot?.documents.forEach { document in
+                    do {
+                        let run = try self.decoder.decode(CleaningRun.self, from: document.data())
                 print("🟡 Warning: Failed to decode \(decodingErrors.count) of today's cleaning runs out of \(snapshot?.documents.count ?? 0)")
             }
             

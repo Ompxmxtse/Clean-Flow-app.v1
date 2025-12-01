@@ -2,108 +2,145 @@ import SwiftUI
 import AVFoundation
 
 struct ScannerView: View {
-    @StateObject private var qrManager = QRManager()
-    @StateObject private var nfcManager = NFCManager()
-    @StateObject private var scannerService = ScannerService()
-    @EnvironmentObject var appState: AppState
-    @EnvironmentObject var authService: AuthService
-    
-    @State private var scanMode: ScanMode = .qr
-    @State private var showingResult = false
-    @State private var scanResult: ScanResult?
-    
-    enum ScanMode: String, CaseIterable {
-        case qr = "QR Code"
-        case nfc = "NFC Tag"
-        
-        var icon: String {
-            switch self {
-            case .qr: return "qrcode"
-            case .nfc: return "antenna.radiowaves.left.and.right"
-            }
-        }
-    }
+    @StateObject private var scannerService = ScannerService.shared
+    @State private var isShowingResult = false
+    @State private var lastScanResult: ScanResult?
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                // Background
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color.deepNavy,
-                        Color.black
-                    ]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
+        ZStack {
+            // Camera Preview
+            CameraPreview(scannerService: scannerService)
                 .ignoresSafeArea()
+            
+            // Overlay UI
+            VStack {
+                // Top Bar
+                HStack {
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "xmark")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.black.opacity(0.5))
+                            .clipShape(Circle())
+                    }
+                    
+                    Spacer()
+                    
+                    Text("Scan QR Code")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    Button(action: toggleFlash) {
+                        Image(systemName: "flashlight.on.fill")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.black.opacity(0.5))
+                            .clipShape(Circle())
+                    }
+                }
+                .padding()
                 
+                Spacer()
+                
+                // Scanning Frame
                 VStack(spacing: 20) {
-                    // Header
-                    headerSection
+                    Text("Align QR code within frame")
+                        .font(.subheadline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.black.opacity(0.5))
+                        .cornerRadius(8)
                     
-                    // Scan Mode Selector
-                    scanModeSelector
+                    // Scanning Frame Visual
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color(red: 43/255, green: 203/255, blue: 255/255), lineWidth: 3)
+                        .frame(width: 250, height: 250)
+                        .overlay(
+                            VStack {
+                                HStack {
+                                    Rectangle()
+                                        .fill(Color(red: 43/255, green: 203/255, blue: 255/255))
+                                        .frame(width: 20, height: 3)
+                                    Spacer()
+                                    Rectangle()
+                                        .fill(Color(red: 43/255, green: 203/255, blue: 255/255))
+                                        .frame(width: 20, height: 3)
+                                }
+                                Spacer()
+                                HStack {
+                                    Rectangle()
+                                        .fill(Color(red: 43/255, green: 203/255, blue: 255/255))
+                                        .frame(width: 20, height: 3)
+                                    Spacer()
+                                    Rectangle()
+                                        .fill(Color(red: 43/255, green: 203/255, blue: 255/255))
+                                        .frame(width: 20, height: 3)
+                                }
+                            }
+                        )
                     
-                    // Scanner Content
-                    scannerContent
+                    Text("Scanning...")
+                        .font(.caption)
+                        .foregroundColor(.white)
+                        .opacity(scannerService.isScanning ? 1.0 : 0.6)
+                }
+                
+                Spacer()
+                
+                // Bottom Instructions
+                VStack(spacing: 16) {
+                    Button(action: scanManually) {
+                        Text("Enter Code Manually")
+                            .font(.subheadline)
+                            .foregroundColor(Color(red: 43/255, green: 203/255, blue: 255/255))
+                            .padding()
+                            .background(Color.white.opacity(0.1))
+                            .cornerRadius(8)
+                    }
                     
-                    // Instructions
-                    instructionsSection
+                    Text("Make sure the QR code is well lit and clearly visible")
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.8))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
                 }
                 .padding()
             }
-            .navigationTitle("Scanner")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("History") {
-                        // Show scan history
-                    }
-                    .foregroundColor(.accentText)
-                }
+        }
+        .onAppear {
+            startScanning()
+        }
+        .onDisappear {
+            scannerService.stopQRScanning()
+        }
+        .onChange(of: scannerService.lastScanResult) { result in
+            if let result = result {
+                lastScanResult = result
+                scannerService.stopQRScanning()
+                isShowingResult = true
             }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
-        .sheet(isPresented: $showingResult) {
-            if let result = scanResult {
+        .sheet(isPresented: $isShowingResult) {
+            if let result = lastScanResult {
                 ScanResultView(result: result)
-                    .environmentObject(appState)
+                    .environmentObject(AppState())
             }
-        }
-        .alert("Scan Error", isPresented: .constant(qrManager.errorMessage != nil || nfcManager.errorMessage != nil), actions: {
-            Button("OK") {
-                qrManager.errorMessage = nil
-                nfcManager.errorMessage = nil
-            }
-        }, message: {
-            Text(qrManager.errorMessage ?? nfcManager.errorMessage ?? "Unknown error")
-        })
-    }
-    
-    // MARK: - Header Section
-    private var headerSection: some View {
-        VStack(spacing: 8) {
-            Text("Area Verification")
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(.primaryText)
-            
-            Text("Scan QR codes or NFC tags to verify cleaning areas")
-                .font(.subheadline)
-                .foregroundColor(.secondaryText)
-                .multilineTextAlignment(.center)
         }
     }
     
-    // MARK: - Scan Mode Selector
-    private var scanModeSelector: some View {
-        HStack(spacing: 12) {
-            ForEach(ScanMode.allCases, id: \.self) { mode in
-                Button(action: {
-                    scanMode = mode
-                    stopCurrentScan()
-                }) {
+    private func startScanning() {
+        scannerService.startQRScanning { result in
+            switch result {
+            case .success:
+                // Handle successful scan
+                break
+            case .failure(let error):
+                print("Scanning error: \(error)")
                     VStack(spacing: 8) {
                         Image(systemName: mode.icon)
                             .font(.title2)

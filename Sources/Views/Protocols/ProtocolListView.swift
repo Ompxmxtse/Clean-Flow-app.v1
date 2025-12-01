@@ -206,7 +206,7 @@ struct AreaFilterChip: View {
 
 // MARK: - Protocol Card
 struct ProtocolCard: View {
-    let protocol: CleaningProtocol
+    let cleaningProtocol: CleaningProtocol
     let onTap: () -> Void
     
     var body: some View {
@@ -215,12 +215,12 @@ struct ProtocolCard: View {
                 // Header
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(protocol.name)
+                        Text(cleaningProtocol.name)
                             .font(.headline)
                             .foregroundColor(.white)
                             .multilineTextAlignment(.leading)
                         
-                        Text(protocol.description)
+                        Text(cleaningProtocol.description)
                             .font(.caption)
                             .foregroundColor(Color.white.opacity(0.6))
                             .lineLimit(2)
@@ -239,7 +239,7 @@ struct ProtocolCard: View {
                             .font(.caption)
                             .foregroundColor(Color(red: 43/255, green: 203/255, blue: 255/255))
                         
-                        Text("\(formatDuration(protocol.requiredDuration))")
+                        Text("\(formatDuration(cleaningProtocol.requiredDuration))")
                             .font(.caption)
                             .foregroundColor(.white)
                         
@@ -249,7 +249,7 @@ struct ProtocolCard: View {
                             .font(.caption)
                             .foregroundColor(Color(red: 43/255, green: 203/255, blue: 255/255))
                         
-                        Text("\(protocol.steps.count) steps")
+                        Text("\(cleaningProtocol.steps.count) steps")
                             .font(.caption)
                             .foregroundColor(.white)
                     }
@@ -259,7 +259,7 @@ struct ProtocolCard: View {
                             .font(.caption)
                             .foregroundColor(Color(red: 43/255, green: 203/255, blue: 255/255))
                         
-                        Text(protocol.areaType.rawValue.replacingOccurrences(of: "_", with: " ").capitalized)
+                        Text(cleaningProtocol.areaType.rawValue.replacingOccurrences(of: "_", with: " ").capitalized)
                             .font(.caption)
                             .foregroundColor(.white)
                     }
@@ -295,7 +295,7 @@ struct ProtocolCard: View {
     }
     
     private var priorityBadge: some View {
-        Text(protocol.priority.rawValue.capitalized)
+        Text(cleaningProtocol.priority.rawValue.capitalized)
             .font(.caption2)
             .fontWeight(.medium)
             .padding(.horizontal, 8)
@@ -306,7 +306,7 @@ struct ProtocolCard: View {
     }
     
     private var priorityColor: Color {
-        switch protocol.priority {
+        switch cleaningProtocol.priority {
         case .critical: return Color(red: 255/255, green: 100/255, blue: 100/255)
         case .high: return Color(red: 255/255, green: 200/255, blue: 100/255)
         case .medium: return Color(red: 43/255, green: 203/255, blue: 255/255)

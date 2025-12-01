@@ -11,6 +11,49 @@
 		63A628B92EDE36A400140621 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 63A628B82EDE36A400140621 /* FirebaseCore */; };
 		63A628BB2EDE36A400140621 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 63A628BA2EDE36A400140621 /* FirebaseDatabase */; };
 		63A628BD2EDE36A400140621 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 63A628BC2EDE36A400140621 /* FirebaseFirestore */; };
+		63A628FC2EDE3C7A00140621 /* PersonnelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628E62EDE3C7A00140621 /* PersonnelView.swift */; };
+		63A628FD2EDE3C7A00140621 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628DA2EDE3C7A00140621 /* LoginView.swift */; };
+		63A628FE2EDE3C7A00140621 /* StaffListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628EA2EDE3C7A00140621 /* StaffListViewModel.swift */; };
+		63A628FF2EDE3C7A00140621 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628FA2EDE3C7A00140621 /* ContentView.swift */; };
+		63A629002EDE3C7A00140621 /* StepChecklistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628F12EDE3C7A00140621 /* StepChecklistView.swift */; };
+		63A629012EDE3C7A00140621 /* AuditListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628D72EDE3C7A00140621 /* AuditListViewModel.swift */; };
+		63A629022EDE3C7A00140621 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628C32EDE3C7A00140621 /* AppState.swift */; };
+		63A629032EDE3C7A00140621 /* StaffDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628E82EDE3C7A00140621 /* StaffDetailViewModel.swift */; };
+		63A629042EDE3C7A00140621 /* ColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628E22EDE3C7A00140621 /* ColorExtensions.swift */; };
+		63A629052EDE3C7A00140621 /* CleaningRunWorkflow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628F82EDE3C7A00140621 /* CleaningRunWorkflow.swift */; };
+		63A629062EDE3C7A00140621 /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628F32EDE3C7A00140621 /* ScannerView.swift */; };
+		63A629072EDE3C7A00140621 /* QRManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628C52EDE3C7A00140621 /* QRManager.swift */; };
+		63A629082EDE3C7A00140621 /* ProtocolDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628ED2EDE3C7A00140621 /* ProtocolDetailView.swift */; };
+		63A629092EDE3C7A00140621 /* ScannerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628D22EDE3C7A00140621 /* ScannerUITests.swift */; };
+		63A6290A2EDE3C7A00140621 /* ScannerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628CE2EDE3C7A00140621 /* ScannerService.swift */; };
+		63A6290B2EDE3C7A00140621 /* AuditListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628D62EDE3C7A00140621 /* AuditListView.swift */; };
+		63A6290C2EDE3C7A00140621 /* CleaningRun.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628C82EDE3C7A00140621 /* CleaningRun.swift */; };
+		63A6290D2EDE3C7A00140621 /* CleanFlowTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628E12EDE3C7A00140621 /* CleanFlowTheme.swift */; };
+		63A6290E2EDE3C7A00140621 /* ProtocolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628F02EDE3C7A00140621 /* ProtocolsView.swift */; };
+		63A6290F2EDE3C7A00140621 /* FirestoreRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628CD2EDE3C7A00140621 /* FirestoreRepository.swift */; };
+		63A629102EDE3C7A00140621 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628F62EDE3C7A00140621 /* SettingsView.swift */; };
+		63A629112EDE3C7A00140621 /* CleaningProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628C72EDE3C7A00140621 /* CleaningProtocol.swift */; };
+		63A629122EDE3C7A00140621 /* PasswordResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628DB2EDE3C7A00140621 /* PasswordResetView.swift */; };
+		63A629132EDE3C7A00140621 /* ScanResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628F42EDE3C7A00140621 /* ScanResultView.swift */; };
+		63A629142EDE3C7A00140621 /* CleanFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628BE2EDE3C7A00140621 /* CleanFlowApp.swift */; };
+		63A629152EDE3C7A00140621 /* EnhancedNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628E42EDE3C7A00140621 /* EnhancedNavigation.swift */; };
+		63A629162EDE3C7A00140621 /* UserDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628C12EDE3C7A00140621 /* UserDataSource.swift */; };
+		63A629172EDE3C7A00140621 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628C02EDE3C7A00140621 /* MockData.swift */; };
+		63A629182EDE3C7A00140621 /* StaffDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628E72EDE3C7A00140621 /* StaffDetailView.swift */; };
+		63A629192EDE3C7A00140621 /* AuthServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628D02EDE3C7A00140621 /* AuthServiceTests.swift */; };
+		63A6291A2EDE3C7A00140621 /* AuditsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628D82EDE3C7A00140621 /* AuditsView.swift */; };
+		63A6291B2EDE3C7A00140621 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628DE2EDE3C7A00140621 /* DashboardView.swift */; };
+		63A6291C2EDE3C7A00140621 /* RegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628DC2EDE3C7A00140621 /* RegistrationView.swift */; };
+		63A6291D2EDE3C7A00140621 /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628C92EDE3C7A00140621 /* Room.swift */; };
+		63A6291E2EDE3C7A00140621 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628CA2EDE3C7A00140621 /* User.swift */; };
+		63A6291F2EDE3C7A00140621 /* AuditDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628D52EDE3C7A00140621 /* AuditDetailView.swift */; };
+		63A629202EDE3C7A00140621 /* ProtocolListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628EF2EDE3C7A00140621 /* ProtocolListViewModel.swift */; };
+		63A629212EDE3C7A00140621 /* StaffListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628E92EDE3C7A00140621 /* StaffListView.swift */; };
+		63A629222EDE3C7A00140621 /* NFCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628C42EDE3C7A00140621 /* NFCManager.swift */; };
+		63A629232EDE3C7A00140621 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628CC2EDE3C7A00140621 /* AuthService.swift */; };
+		63A629242EDE3C7A00140621 /* UserDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628EB2EDE3C7A00140621 /* UserDetailView.swift */; };
+		63A629252EDE3C7A00140621 /* EnhancedDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628DF2EDE3C7A00140621 /* EnhancedDashboardView.swift */; };
+		63A629262EDE3C7A00140621 /* ProtocolListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628EE2EDE3C7A00140621 /* ProtocolListView.swift */; };
 		63B0BDBC2EDE06C4000E5278 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63B0BDB42EDE06C4000E5278 /* Assets.xcassets */; };
 		63B0BDBE2EDE06C4000E5278 /* CleanFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B0BDB72EDE06C4000E5278 /* CleanFlowApp.swift */; };
 		63B0BDBF2EDE06C4000E5278 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B0BDB92EDE06C4000E5278 /* ContentView.swift */; };
@@ -34,6 +77,49 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		63A628BE2EDE3C7A00140621 /* CleanFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanFlowApp.swift; sourceTree = "<group>"; };
+		63A628C02EDE3C7A00140621 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
+		63A628C12EDE3C7A00140621 /* UserDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataSource.swift; sourceTree = "<group>"; };
+		63A628C32EDE3C7A00140621 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		63A628C42EDE3C7A00140621 /* NFCManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCManager.swift; sourceTree = "<group>"; };
+		63A628C52EDE3C7A00140621 /* QRManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRManager.swift; sourceTree = "<group>"; };
+		63A628C72EDE3C7A00140621 /* CleaningProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleaningProtocol.swift; sourceTree = "<group>"; };
+		63A628C82EDE3C7A00140621 /* CleaningRun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleaningRun.swift; sourceTree = "<group>"; };
+		63A628C92EDE3C7A00140621 /* Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
+		63A628CA2EDE3C7A00140621 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		63A628CC2EDE3C7A00140621 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		63A628CD2EDE3C7A00140621 /* FirestoreRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreRepository.swift; sourceTree = "<group>"; };
+		63A628CE2EDE3C7A00140621 /* ScannerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerService.swift; sourceTree = "<group>"; };
+		63A628D02EDE3C7A00140621 /* AuthServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthServiceTests.swift; sourceTree = "<group>"; };
+		63A628D22EDE3C7A00140621 /* ScannerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerUITests.swift; sourceTree = "<group>"; };
+		63A628D52EDE3C7A00140621 /* AuditDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuditDetailView.swift; sourceTree = "<group>"; };
+		63A628D62EDE3C7A00140621 /* AuditListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuditListView.swift; sourceTree = "<group>"; };
+		63A628D72EDE3C7A00140621 /* AuditListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuditListViewModel.swift; sourceTree = "<group>"; };
+		63A628D82EDE3C7A00140621 /* AuditsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuditsView.swift; sourceTree = "<group>"; };
+		63A628DA2EDE3C7A00140621 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		63A628DB2EDE3C7A00140621 /* PasswordResetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordResetView.swift; sourceTree = "<group>"; };
+		63A628DC2EDE3C7A00140621 /* RegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationView.swift; sourceTree = "<group>"; };
+		63A628DE2EDE3C7A00140621 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		63A628DF2EDE3C7A00140621 /* EnhancedDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnhancedDashboardView.swift; sourceTree = "<group>"; };
+		63A628E12EDE3C7A00140621 /* CleanFlowTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanFlowTheme.swift; sourceTree = "<group>"; };
+		63A628E22EDE3C7A00140621 /* ColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtensions.swift; sourceTree = "<group>"; };
+		63A628E42EDE3C7A00140621 /* EnhancedNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnhancedNavigation.swift; sourceTree = "<group>"; };
+		63A628E62EDE3C7A00140621 /* PersonnelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonnelView.swift; sourceTree = "<group>"; };
+		63A628E72EDE3C7A00140621 /* StaffDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffDetailView.swift; sourceTree = "<group>"; };
+		63A628E82EDE3C7A00140621 /* StaffDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffDetailViewModel.swift; sourceTree = "<group>"; };
+		63A628E92EDE3C7A00140621 /* StaffListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffListView.swift; sourceTree = "<group>"; };
+		63A628EA2EDE3C7A00140621 /* StaffListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffListViewModel.swift; sourceTree = "<group>"; };
+		63A628EB2EDE3C7A00140621 /* UserDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailView.swift; sourceTree = "<group>"; };
+		63A628ED2EDE3C7A00140621 /* ProtocolDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolDetailView.swift; sourceTree = "<group>"; };
+		63A628EE2EDE3C7A00140621 /* ProtocolListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolListView.swift; sourceTree = "<group>"; };
+		63A628EF2EDE3C7A00140621 /* ProtocolListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolListViewModel.swift; sourceTree = "<group>"; };
+		63A628F02EDE3C7A00140621 /* ProtocolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolsView.swift; sourceTree = "<group>"; };
+		63A628F12EDE3C7A00140621 /* StepChecklistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepChecklistView.swift; sourceTree = "<group>"; };
+		63A628F32EDE3C7A00140621 /* ScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
+		63A628F42EDE3C7A00140621 /* ScanResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanResultView.swift; sourceTree = "<group>"; };
+		63A628F62EDE3C7A00140621 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		63A628F82EDE3C7A00140621 /* CleaningRunWorkflow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleaningRunWorkflow.swift; sourceTree = "<group>"; };
+		63A628FA2EDE3C7A00140621 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		63B0BD8A2EDE06AC000E5278 /* Clean-Flow app.v1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Clean-Flow app.v1.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63B0BD972EDE06AC000E5278 /* Clean-Flow app.v1Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Clean-Flow app.v1Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63B0BDA12EDE06AC000E5278 /* Clean-Flow app.v1UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Clean-Flow app.v1UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -90,6 +176,194 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		63A628BF2EDE3C7A00140621 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				63A628BE2EDE3C7A00140621 /* CleanFlowApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		63A628C22EDE3C7A00140621 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				63A628C02EDE3C7A00140621 /* MockData.swift */,
+				63A628C12EDE3C7A00140621 /* UserDataSource.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		63A628C62EDE3C7A00140621 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				63A628C32EDE3C7A00140621 /* AppState.swift */,
+				63A628C42EDE3C7A00140621 /* NFCManager.swift */,
+				63A628C52EDE3C7A00140621 /* QRManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		63A628CB2EDE3C7A00140621 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				63A628C72EDE3C7A00140621 /* CleaningProtocol.swift */,
+				63A628C82EDE3C7A00140621 /* CleaningRun.swift */,
+				63A628C92EDE3C7A00140621 /* Room.swift */,
+				63A628CA2EDE3C7A00140621 /* User.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		63A628CF2EDE3C7A00140621 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				63A628CC2EDE3C7A00140621 /* AuthService.swift */,
+				63A628CD2EDE3C7A00140621 /* FirestoreRepository.swift */,
+				63A628CE2EDE3C7A00140621 /* ScannerService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		63A628D12EDE3C7A00140621 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				63A628D02EDE3C7A00140621 /* AuthServiceTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		63A628D32EDE3C7A00140621 /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				63A628D22EDE3C7A00140621 /* ScannerUITests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
+		63A628D42EDE3C7A00140621 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				63A628D12EDE3C7A00140621 /* Tests */,
+				63A628D32EDE3C7A00140621 /* UITests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		63A628D92EDE3C7A00140621 /* Audits */ = {
+			isa = PBXGroup;
+			children = (
+				63A628D52EDE3C7A00140621 /* AuditDetailView.swift */,
+				63A628D62EDE3C7A00140621 /* AuditListView.swift */,
+				63A628D72EDE3C7A00140621 /* AuditListViewModel.swift */,
+				63A628D82EDE3C7A00140621 /* AuditsView.swift */,
+			);
+			path = Audits;
+			sourceTree = "<group>";
+		};
+		63A628DD2EDE3C7A00140621 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				63A628DA2EDE3C7A00140621 /* LoginView.swift */,
+				63A628DB2EDE3C7A00140621 /* PasswordResetView.swift */,
+				63A628DC2EDE3C7A00140621 /* RegistrationView.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		63A628E02EDE3C7A00140621 /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				63A628DE2EDE3C7A00140621 /* DashboardView.swift */,
+				63A628DF2EDE3C7A00140621 /* EnhancedDashboardView.swift */,
+			);
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		63A628E32EDE3C7A00140621 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				63A628E12EDE3C7A00140621 /* CleanFlowTheme.swift */,
+				63A628E22EDE3C7A00140621 /* ColorExtensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		63A628E52EDE3C7A00140621 /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				63A628E42EDE3C7A00140621 /* EnhancedNavigation.swift */,
+			);
+			path = Navigation;
+			sourceTree = "<group>";
+		};
+		63A628EC2EDE3C7A00140621 /* Personnel */ = {
+			isa = PBXGroup;
+			children = (
+				63A628E62EDE3C7A00140621 /* PersonnelView.swift */,
+				63A628E72EDE3C7A00140621 /* StaffDetailView.swift */,
+				63A628E82EDE3C7A00140621 /* StaffDetailViewModel.swift */,
+				63A628E92EDE3C7A00140621 /* StaffListView.swift */,
+				63A628EA2EDE3C7A00140621 /* StaffListViewModel.swift */,
+				63A628EB2EDE3C7A00140621 /* UserDetailView.swift */,
+			);
+			path = Personnel;
+			sourceTree = "<group>";
+		};
+		63A628F22EDE3C7A00140621 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				63A628ED2EDE3C7A00140621 /* ProtocolDetailView.swift */,
+				63A628EE2EDE3C7A00140621 /* ProtocolListView.swift */,
+				63A628EF2EDE3C7A00140621 /* ProtocolListViewModel.swift */,
+				63A628F02EDE3C7A00140621 /* ProtocolsView.swift */,
+				63A628F12EDE3C7A00140621 /* StepChecklistView.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		63A628F52EDE3C7A00140621 /* Scanner */ = {
+			isa = PBXGroup;
+			children = (
+				63A628F32EDE3C7A00140621 /* ScannerView.swift */,
+				63A628F42EDE3C7A00140621 /* ScanResultView.swift */,
+			);
+			path = Scanner;
+			sourceTree = "<group>";
+		};
+		63A628F72EDE3C7A00140621 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				63A628F62EDE3C7A00140621 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		63A628F92EDE3C7A00140621 /* Workflows */ = {
+			isa = PBXGroup;
+			children = (
+				63A628F82EDE3C7A00140621 /* CleaningRunWorkflow.swift */,
+			);
+			path = Workflows;
+			sourceTree = "<group>";
+		};
+		63A628FB2EDE3C7A00140621 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				63A628D92EDE3C7A00140621 /* Audits */,
+				63A628DD2EDE3C7A00140621 /* Auth */,
+				63A628E02EDE3C7A00140621 /* Dashboard */,
+				63A628E32EDE3C7A00140621 /* Extensions */,
+				63A628E52EDE3C7A00140621 /* Navigation */,
+				63A628EC2EDE3C7A00140621 /* Personnel */,
+				63A628F22EDE3C7A00140621 /* Protocols */,
+				63A628F52EDE3C7A00140621 /* Scanner */,
+				63A628F72EDE3C7A00140621 /* Settings */,
+				63A628F92EDE3C7A00140621 /* Workflows */,
+				63A628FA2EDE3C7A00140621 /* ContentView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		63B0BD812EDE06AC000E5278 = {
 			isa = PBXGroup;
 			children = (
@@ -140,6 +414,13 @@
 		63B0BDBB2EDE06C4000E5278 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				63A628BF2EDE3C7A00140621 /* App */,
+				63A628C22EDE3C7A00140621 /* Data */,
+				63A628C62EDE3C7A00140621 /* Managers */,
+				63A628CB2EDE3C7A00140621 /* Models */,
+				63A628CF2EDE3C7A00140621 /* Services */,
+				63A628D42EDE3C7A00140621 /* Tests */,
+				63A628FB2EDE3C7A00140621 /* Views */,
 				63B0BDB82EDE06C4000E5278 /* App */,
 				63B0BDBA2EDE06C4000E5278 /* Views */,
 			);
@@ -300,6 +581,49 @@
 			files = (
 				63B0BDBE2EDE06C4000E5278 /* CleanFlowApp.swift in Sources */,
 				63B0BDBF2EDE06C4000E5278 /* ContentView.swift in Sources */,
+				63A628FC2EDE3C7A00140621 /* PersonnelView.swift in Sources */,
+				63A628FD2EDE3C7A00140621 /* LoginView.swift in Sources */,
+				63A628FE2EDE3C7A00140621 /* StaffListViewModel.swift in Sources */,
+				63A628FF2EDE3C7A00140621 /* ContentView.swift in Sources */,
+				63A629002EDE3C7A00140621 /* StepChecklistView.swift in Sources */,
+				63A629012EDE3C7A00140621 /* AuditListViewModel.swift in Sources */,
+				63A629022EDE3C7A00140621 /* AppState.swift in Sources */,
+				63A629032EDE3C7A00140621 /* StaffDetailViewModel.swift in Sources */,
+				63A629042EDE3C7A00140621 /* ColorExtensions.swift in Sources */,
+				63A629052EDE3C7A00140621 /* CleaningRunWorkflow.swift in Sources */,
+				63A629062EDE3C7A00140621 /* ScannerView.swift in Sources */,
+				63A629072EDE3C7A00140621 /* QRManager.swift in Sources */,
+				63A629082EDE3C7A00140621 /* ProtocolDetailView.swift in Sources */,
+				63A629092EDE3C7A00140621 /* ScannerUITests.swift in Sources */,
+				63A6290A2EDE3C7A00140621 /* ScannerService.swift in Sources */,
+				63A6290B2EDE3C7A00140621 /* AuditListView.swift in Sources */,
+				63A6290C2EDE3C7A00140621 /* CleaningRun.swift in Sources */,
+				63A6290D2EDE3C7A00140621 /* CleanFlowTheme.swift in Sources */,
+				63A6290E2EDE3C7A00140621 /* ProtocolsView.swift in Sources */,
+				63A6290F2EDE3C7A00140621 /* FirestoreRepository.swift in Sources */,
+				63A629102EDE3C7A00140621 /* SettingsView.swift in Sources */,
+				63A629112EDE3C7A00140621 /* CleaningProtocol.swift in Sources */,
+				63A629122EDE3C7A00140621 /* PasswordResetView.swift in Sources */,
+				63A629132EDE3C7A00140621 /* ScanResultView.swift in Sources */,
+				63A629142EDE3C7A00140621 /* CleanFlowApp.swift in Sources */,
+				63A629152EDE3C7A00140621 /* EnhancedNavigation.swift in Sources */,
+				63A629162EDE3C7A00140621 /* UserDataSource.swift in Sources */,
+				63A629172EDE3C7A00140621 /* MockData.swift in Sources */,
+				63A629182EDE3C7A00140621 /* StaffDetailView.swift in Sources */,
+				63A629192EDE3C7A00140621 /* AuthServiceTests.swift in Sources */,
+				63A6291A2EDE3C7A00140621 /* AuditsView.swift in Sources */,
+				63A6291B2EDE3C7A00140621 /* DashboardView.swift in Sources */,
+				63A6291C2EDE3C7A00140621 /* RegistrationView.swift in Sources */,
+				63A6291D2EDE3C7A00140621 /* Room.swift in Sources */,
+				63A6291E2EDE3C7A00140621 /* User.swift in Sources */,
+				63A6291F2EDE3C7A00140621 /* AuditDetailView.swift in Sources */,
+				63A629202EDE3C7A00140621 /* ProtocolListViewModel.swift in Sources */,
+				63A629212EDE3C7A00140621 /* StaffListView.swift in Sources */,
+				63A629222EDE3C7A00140621 /* NFCManager.swift in Sources */,
+				63A629232EDE3C7A00140621 /* AuthService.swift in Sources */,
+				63A629242EDE3C7A00140621 /* UserDetailView.swift in Sources */,
+				63A629252EDE3C7A00140621 /* EnhancedDashboardView.swift in Sources */,
+				63A629262EDE3C7A00140621 /* ProtocolListView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

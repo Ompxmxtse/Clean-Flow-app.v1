@@ -51,9 +51,9 @@ class ProtocolListViewModel: ObservableObject {
         
         // Apply search text
         if !searchText.isEmpty {
-            filtered = filtered.filter { protocol in
-                protocol.name.localizedCaseInsensitiveContains(searchText) ||
-                protocol.description.localizedCaseInsensitiveContains(searchText)
+            filtered = filtered.filter { cleaningProtocol in
+                cleaningProtocol.name.localizedCaseInsensitiveContains(searchText) ||
+                cleaningProtocol.description.localizedCaseInsensitiveContains(searchText)
             }
         }
         

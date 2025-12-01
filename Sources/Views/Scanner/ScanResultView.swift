@@ -161,8 +161,8 @@ struct ScanResultView: View {
               let protocolName = result.protocolName else { return }
         
         // Find the protocol in app state
-        if let protocol = appState.protocols.first(where: { $0.id == protocolId }) {
-            appState.startCleaningProtocol(protocol, areaId: result.areaId, areaName: result.areaName)
+        if let cleaningProtocol = appState.protocols.first(where: { $0.id == protocolId }) {
+            appState.startCleaningProtocol(cleaningProtocol, areaId: result.areaId, areaName: result.areaName)
             dismiss()
         }
     }

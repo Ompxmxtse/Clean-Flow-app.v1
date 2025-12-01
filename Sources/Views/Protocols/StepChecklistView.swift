@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct StepChecklistView: View {
-    let protocol: CleaningProtocol
+    let cleaningProtocol: CleaningProtocol
     @State private var completedSteps: Set<String> = []
     @State private var stepNotes: [String: String] = [:]
     @State private var showingNotesForStep: CleaningStep?
@@ -29,7 +29,7 @@ struct StepChecklistView: View {
                     progressHeader
                     
                     // Current Step
-                    if currentStepIndex < protocol.steps.count {
+                    if currentStepIndex < cleaningProtocol.steps.count {
                         currentStepView
                     }
                     
@@ -37,7 +37,7 @@ struct StepChecklistView: View {
                     stepNavigation
                     
                     // Complete Button
-                    if completedSteps.count == protocol.steps.count {
+                    if completedSteps.count == cleaningProtocol.steps.count {
                         completeButton
                     }
                 }
@@ -75,7 +75,7 @@ struct StepChecklistView: View {
     // MARK: - Progress Header
     private var progressHeader: some View {
         VStack(spacing: 16) {
-            Text(protocol.name)
+            Text(cleaningProtocol.name)
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
@@ -90,12 +90,12 @@ struct StepChecklistView: View {
                     
                     Spacer()
                     
-                    Text("\(completedSteps.count) of \(protocol.steps.count)")
+                    Text("\(completedSteps.count) of \(cleaningProtocol.steps.count)")
                         .font(.caption)
                         .foregroundColor(Color(red: 43/255, green: 203/255, blue: 255/255))
                 }
                 
-                ProgressView(value: Double(completedSteps.count), total: Double(protocol.steps.count))
+                ProgressView(value: Double(completedSteps.count), total: Double(cleaningProtocol.steps.count))
                     .progressViewStyle(LinearProgressViewStyle(tint: Color(red: 43/255, green: 203/255, blue: 255/255)))
                     .scaleEffect(y: 1.5)
             }
@@ -119,7 +119,7 @@ struct StepChecklistView: View {
             VStack(spacing: 20) {
                 // Step Header
                 VStack(spacing: 12) {
-                    Text("Step \(currentStepIndex + 1) of \(protocol.steps.count)")
+                    Text("Step \(currentStepIndex + 1) of \(cleaningProtocol.steps.count)")
                         .font(.headline)
                         .foregroundColor(Color(red: 43/255, green: 203/255, blue: 255/255))
                     
@@ -183,7 +183,7 @@ struct StepChecklistView: View {
             .disabled(currentStepIndex == 0)
             
             Button(action: {
-                if currentStepIndex < protocol.steps.count - 1 {
+                if currentStepIndex < cleaningProtocol.steps.count - 1 {
                     currentStepIndex += 1
                 }
             }) {
@@ -205,7 +205,7 @@ struct StepChecklistView: View {
                 )
                 .cornerRadius(16)
             }
-            .disabled(currentStepIndex == protocol.steps.count - 1)
+            .disabled(currentStepIndex == cleaningProtocol.steps.count - 1)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
@@ -245,25 +245,12 @@ struct StepChecklistView: View {
     
     // MARK: - Helper Methods
     private func getCurrentStep() -> CleaningStep? {
-        guard currentStepIndex < protocol.steps.count else { return nil }
-        return protocol.steps[currentStepIndex]
+        guard currentStepIndex < cleaningProtocol.steps.count else { return nil }
+        return cleaningProtocol.steps[currentStepIndex]
     }
     
     private func handleStepAction(_ action: StepAction, for step: CleaningStep) {
         switch action {
-        case .toggleComplete:
-            if completedSteps.contains(step.id) {
-                completedSteps.remove(step.id)
-            } else {
-                completedSteps.insert(step.id)
-                // Auto-advance to next step
-                if currentStepIndex < protocol.steps.count - 1 {
-                    currentStepIndex += 1
-                }
-            }
-            
-            // Haptic feedback
-            let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
             impactFeedback.impactOccurred()
             
         case .addNotes:

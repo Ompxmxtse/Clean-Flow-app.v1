@@ -73,131 +73,163 @@ class ScannerService: NSObject, ObservableObject {
     
     // MARK: - NFC Scanner
     @available(iOS 13.0, *)
-    func startNFCTagReading(completion: @escaping (Result<String, Error>) -> Void) {
-        guard NFCNDEFReaderSession.readingAvailable else {
-            completion(.failure(ScannerError.nfcNotAvailable))
             return
         }
+        
+        qrCompletion = completion
+        
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.setupCaptureSession()
+        }
+    }
+    
+    func stopQRScanning() {
+        captureSession?.stopRunning()
+        captureSession = nil
+        previewLayer = nil
+        isScanning = false
+    }
+    
+    private func setupCaptureSession() {
+        let session = AVCaptureSession()
+        
+        guard let captureDevice = AVCaptureDevice.default(for: .video) else {
+            qrCompletion?(.failure(.cameraUnavailable))
+            return
+        }
+        
+        do {
+            let input = try AVCaptureDeviceInput(device: captureDevice)
+            
+            if session.canAddInput(input) {
+                session.addInput(input)
+                
+                let output = AVCaptureMetadataOutput()
+                output.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
+                
+                if session.canAddOutput(output) {
+                    session.addOutput(output)
+                    output.metadataObjectTypes = [.qr]
+                    
+                    let previewLayer = AVCaptureVideoPreviewLayer(session: session)
+                    previewLayer.videoGravity = .resizeAspectFill
+                    
+                    DispatchQueue.main.async { [weak self] in
+                        self?.captureSession = session
+                        self?.previewLayer = previewLayer
+                        self?.isScanning = true
+                        
+                        session.startRunning()
+                    }
+                } else {
+                    qrCompletion?(.failure(.scanningFailed))
+                }
+            } else {
+                qrCompletion?(.failure(.scanningFailed))
+            }
+        } catch {
+            qrCompletion?(.failure(.scanningFailed))
+        }
+    }
+    
+    func getPreviewLayer() -> AVCaptureVideoPreviewLayer? {
+        return previewLayer
+    }
+    
+    // MARK: - NFC Scanning
+    func startNFScanning(completion: @escaping (Result<String, ScannerError>) -> Void) {
+        guard NFCNDEFReaderSession.readingAvailable else {
+            completion(.failure(.nfcUnavailable))
+            return
+        }
+        
+        nfcCompletion = completion
         
         let session = NFCNDEFReaderSession(delegate: self, queue: nil, invalidateAfterFirstRead: true)
-        session?.begin()
-        
-        // Store completion handler for NFC delegate
-        self.nfcCompletion = completion
+        session.begin()
     }
     
-    private var nfcCompletion: ((Result<String, Error>) -> Void)?
-    
-    func validateNFCTag(_ tagData: String, completion: @escaping (Result<ScanResult, Error>) -> Void) {
-        // Parse NFC tag data format
-        let components = tagData.components(separatedBy: ":")
-        guard components.count >= 2 else {
-            completion(.failure(ScannerError.invalidNFCFormat))
-            return
-        }
+    // MARK: - Parse QR Code
+    func parseQRCode(_ string: String) -> ScanResult? {
+        guard string.hasPrefix("cleanflow://") else { return nil }
         
-        let areaId = components[0]
-        let assetType = components[1]
+        let components = string.dropFirst(12).components(separatedBy: "&")
+        var areaId: String?
+        var protocolId: String?
+        var areaName: String?
         
-        // Validate with Firestore
-        validateNFCTagData(areaId: areaId, assetType: assetType) { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let isValid):
-                    if isValid {
-                        let scanResult = ScanResult(
-                            type: .nfc,
-                            areaId: areaId,
-                            protocolId: nil,
-                            areaName: "Mock NFC Area \(areaId)",
-                            protocolName: nil,
-                            assetType: assetType,
-                            timestamp: Date(),
-                            isValid: true
-                        )
-                        self?.scanResult = scanResult
-                        self?.triggerHapticFeedback()
-                        completion(.success(scanResult))
-                    } else {
-                        completion(.failure(ScannerError.invalidNFCTag))
-                    }
-                case .failure(let error):
-                    completion(.failure(error))
-                }
+        for component in components {
+            let pair = component.components(separatedBy: "=")
+            guard pair.count == 2 else { continue }
+            
+            switch pair[0] {
+            case "area":
+                areaId = pair[1]
+            case "protocol":
+                protocolId = pair[1]
+            case "name":
+                areaName = pair[1].removingPercentEncoding
+            default:
+                break
             }
         }
-    }
-    
-    // MARK: - Helper Methods
-    private func validateAreaAndProtocol(areaId: String, protocolId: String, completion: @escaping (Result<Bool, Error>) -> Void) {
-        // In real implementation, validate against Firestore
-        // For now, simulate validation
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            completion(.success(true)) // Mock success
-        }
-    }
-    
-    private func validateNFCTagData(areaId: String, assetType: String, completion: @escaping (Result<Bool, Error>) -> Void) {
-        // In real implementation, validate against Firestore
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            completion(.success(true)) // Mock success
-        }
-    }
-    
-    private func triggerHapticFeedback() {
-        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-        impactFeedback.impactOccurred()
         
-        // Show notification
-        let content = UNMutableNotificationContent()
-        content.title = "Scan Successful"
-        content.body = "Area verified successfully"
-        content.sound = UNNotificationSound.default
+        guard let id = areaId, let name = areaName else { return nil }
         
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request)
+        return ScanResult(
+            type: .qr,
+            areaId: id,
+            protocolId: protocolId,
+            areaName: name
+        )
     }
 }
 
-// MARK: - NFC Session Delegate
-@available(iOS 13.0, *)
-    func readerSession(_ session: NFCNDEFReaderSession, didDetectNDEFs messages: [NFCNDEFMessage]) {
-        guard let message = messages.first,
-              let record = message.records.first else {
-            nfcCompletion?(.failure(ScannerError.invalidNFCFormat))
+// MARK: - AVCaptureMetadataOutputObjectsDelegate
+extension ScannerService: AVCaptureMetadataOutputObjectsDelegate {
+    func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
+        guard let metadataObject = metadataObjects.first as? AVMetadataMachineReadableCodeObject,
+              let stringValue = metadataObject.stringValue else {
             return
         }
         
-        // For Text records, skip status byte and language code
-        let payload = record.payload
-        if record.typeNameFormat == .nfcWellKnown,
-           let type = String(data: record.type, encoding: .utf8),
-           type == "T",
-           payload.count > 0 {
-            let statusByte = payload[0]
-            let languageCodeLength = Int(statusByte & 0x3F)
-            let textStartIndex = 1 + languageCodeLength
-            if payload.count > textStartIndex,
-               let text = String(data: payload.suffix(from: textStartIndex), encoding: .utf8) {
-                nfcCompletion?(.success(text))
-                nfcCompletion = nil
-                return
-            }
+        if let scanResult = parseQRCode(stringValue) {
+            lastScanResult = scanResult
+            qrCompletion?(.success(stringValue))
+        } else {
+            qrCompletion?(.failure(.invalidQRFormat))
         }
         
-        // Fallback for other record types
-        if let text = String(data: payload, encoding: .utf8) {
-            nfcCompletion?(.success(text))
+        qrCompletion = nil
+    }
+}
+
+// MARK: - NFCNDEFReaderSessionDelegate
+extension ScannerService: NFCNDEFReaderSessionDelegate {
+    func readerSession(_ session: NFCNDEFReaderSession, didDetectNDEFs messages: [NFCNDEFMessage]) {
+        guard let message = messages.first,
+              let record = message.records.first,
+              let payload = String(data: record.payload, encoding: .utf8) else {
+            nfcCompletion?(.failure(.invalidNFCFormat))
+            return
+        }
+        
+        if let scanResult = parseQRCode(payload) {
+            lastScanResult = scanResult
+            nfcCompletion?(.success(payload))
         } else {
-            nfcCompletion?(.failure(ScannerError.invalidNFCFormat))
+            nfcCompletion?(.failure(.invalidNFCFormat))
         }
         nfcCompletion = nil
     }
-            return
-        }
-        
-        nfcCompletion?(.success(payload))
+    
+    func readerSession(_ session: NFCNDEFReaderSession, didInvalidateWithError error: Error) {
+        nfcCompletion?(.failure(.nfcError(error)))
         nfcCompletion = nil
+    }
+    
+    func readerSessionDidBecomeActive(_ session: NFCNDEFReaderSession) {
+        // Session became active
     }
 }
 
@@ -207,10 +239,6 @@ struct ScanResult {
     let areaId: String
     let protocolId: String?
     let areaName: String
-    let protocolName: String?
-    let assetType: String?
-    let timestamp: Date
-    let isValid: Bool
 }
 
 enum ScanType {
@@ -219,27 +247,27 @@ enum ScanType {
 }
 
 enum ScannerError: LocalizedError {
-    case cameraPermissionDenied
-    case nfcNotAvailable
+    case cameraUnavailable
+    case nfcUnavailable
+    case scanningFailed
     case invalidQRFormat
     case invalidNFCFormat
-    case invalidAreaOrProtocol
-    case invalidNFCTag
+    case nfcError(Error)
     
     var errorDescription: String? {
         switch self {
-        case .cameraPermissionDenied:
-            return "Camera permission is required for QR scanning"
-        case .nfcNotAvailable:
+        case .cameraUnavailable:
+            return "Camera is not available on this device"
+        case .nfcUnavailable:
             return "NFC is not available on this device"
+        case .scanningFailed:
+            return "Failed to start scanning"
         case .invalidQRFormat:
             return "Invalid QR code format"
         case .invalidNFCFormat:
             return "Invalid NFC tag format"
-        case .invalidAreaOrProtocol:
-            return "Invalid area or protocol specified"
-        case .invalidNFCTag:
-            return "Invalid NFC tag data"
+        case .nfcError(let error):
+            return "NFC error: \(error.localizedDescription)"
         }
     }
 }

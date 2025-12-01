@@ -142,7 +142,6 @@ class QRManager: NSObject, ObservableObject, AVCaptureMetadataOutputObjectsDeleg
             error: nil
         )
     }
-    }
     
     func parseQRCode(_ code: String) -> QRCodeData? {
         let validation = validateQRCode(code)

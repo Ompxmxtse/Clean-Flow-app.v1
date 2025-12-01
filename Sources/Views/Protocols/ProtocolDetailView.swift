@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ProtocolDetailView: View {
-    let protocol: CleaningProtocol
+    let cleaningProtocol: CleaningProtocol
     @EnvironmentObject var appState: AppState
     @Environment(\.dismiss) var dismiss
     @State private var selectedArea = ""
@@ -41,7 +41,7 @@ struct ProtocolDetailView: View {
                     .padding()
                 }
             }
-            .navigationTitle(protocol.name)
+            .navigationTitle(cleaningProtocol.name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -59,20 +59,20 @@ struct ProtocolDetailView: View {
             }
             Button("Cancel", role: .cancel) { }
         } message: {
-            Text("Are you ready to start the \(protocol.name) in \(selectedArea)?")
+            Text("Are you ready to start the \(cleaningProtocol.name) in \(selectedArea)?")
         }
     }
     
     // MARK: - Header Section
     private var headerSection: some View {
         VStack(spacing: 12) {
-            Text(protocol.name)
+            Text(cleaningProtocol.name)
                 .font(.title)
                 .fontWeight(.bold)
                 .foregroundColor(.primaryText)
                 .multilineTextAlignment(.center)
             
-            Text(protocol.description)
+            Text(cleaningProtocol.description)
                 .font(.subheadline)
                 .foregroundColor(.secondaryText)
                 .multilineTextAlignment(.center)
@@ -97,19 +97,19 @@ struct ProtocolDetailView: View {
                 InfoRow(
                     icon: "clock",
                     title: "Estimated Duration",
-                    value: formatDuration(protocol.requiredDuration)
+                    value: formatDuration(cleaningProtocol.requiredDuration)
                 )
                 
                 InfoRow(
                     icon: "list.bullet",
                     title: "Total Steps",
-                    value: "\(protocol.steps.count)"
+                    value: "\(cleaningProtocol.steps.count)"
                 )
                 
                 InfoRow(
                     icon: "calendar",
                     title: "Last Updated",
-                    value: formatDate(protocol.updatedAt)
+                    value: formatDate(cleaningProtocol.updatedAt)
                 )
             }
         }
@@ -125,7 +125,7 @@ struct ProtocolDetailView: View {
                 .foregroundColor(.primaryText)
             
             VStack(spacing: 12) {
-                ForEach(Array(protocol.steps.enumerated()), id: \.element.id) { index, step in
+                ForEach(Array(cleaningProtocol.steps.enumerated()), id: \.element.id) { index, step in
                     StepOverviewRow(
                         stepNumber: index + 1,
                         step: step
@@ -206,24 +206,11 @@ struct ProtocolDetailView: View {
             .cornerRadius(12)
             .shadow(color: .neonAqua.opacity(0.3), radius: 8)
         }
-        .disabled(selectedArea.isEmpty)
-        .padding(.bottom, 20)
-    }
-    
-    // MARK: - Helper Properties
-    private var priorityBadge: some View {
-        Text(protocol.priority.rawValue.capitalized)
-            .font(.caption)
-            .fontWeight(.medium)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(priorityColor.opacity(0.2))
-            .foregroundColor(priorityColor)
             .clipShape(Capsule())
     }
     
     private var areaTypeBadge: some View {
-        Text(protocol.areaType.rawValue.replacingOccurrences(of: "_", with: " ").capitalized)
+        Text(cleaningProtocol.areaType.rawValue.replacingOccurrences(of: "_", with: " ").capitalized)
             .font(.caption)
             .fontWeight(.medium)
             .padding(.horizontal, 12)
@@ -234,7 +221,7 @@ struct ProtocolDetailView: View {
     }
     
     private var priorityColor: Color {
-        switch protocol.priority {
+        switch cleaningProtocol.priority {
         case .critical: return .errorRed
         case .high: return .warningYellow
         case .medium: return .neonAqua
@@ -262,7 +249,7 @@ struct ProtocolDetailView: View {
     }
     
     private func startProtocol() {
-        appState.startCleaningProtocol(protocol, areaId: "area-123", areaName: selectedArea)
+        appState.startCleaningProtocol(cleaningProtocol, areaId: "area-123", areaName: selectedArea)
         dismiss()
     }
     

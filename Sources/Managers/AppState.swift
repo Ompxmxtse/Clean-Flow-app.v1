@@ -73,7 +73,8 @@ class AppState: ObservableObject {
                 case .success(let stats):
                     self?.dashboardStats = stats
                 case .failure(let error):
-                    self?.showAlert(title: "Error", message: error.localizedDescription)
+                    break
+                self?.showAlert(title: "Error", message: error.localizedDescription)
                 }
                 group.leave()
             }
@@ -87,7 +88,8 @@ class AppState: ObservableObject {
                 case .success(let runs):
                     self?.recentRuns = runs
                 case .failure(let error):
-                    // Handle error appropriately in production
+                    break
+                // Handle error appropriately in production
                 }
                 group.leave()
             }
@@ -101,7 +103,8 @@ class AppState: ObservableObject {
                 case .success(let protocols):
                     self?.protocols = protocols
                 case .failure(let error):
-                    // Handle error appropriately in production
+                    break
+                // Handle error appropriately in production
                 }
                 group.leave()
             }
@@ -118,13 +121,13 @@ class AppState: ObservableObject {
         self.showingAlert = true
     }
     
-    func startCleaningProtocol(_ protocol: CleaningProtocol, areaId: String, areaName: String) {
+    func startCleaningProtocol(_ cleaningProtocol: CleaningProtocol, areaId: String, areaName: String) {
         guard let user = currentUser else { return }
         
         let cleaningRun = CleaningRun(
             id: UUID().uuidString,
-            protocolId: protocol.id,
-            protocolName: protocol.name,
+            protocolId: cleaningProtocol.id,
+            protocolName: cleaningProtocol.name,
             cleanerId: user.id,
             cleanerName: user.name,
             areaId: areaId,
@@ -135,7 +138,7 @@ class AppState: ObservableObject {
             verificationMethod: .manual,
             qrCode: nil,
             nfcTag: nil,
-            steps: protocol.steps.map { step in
+            steps: cleaningProtocol.steps.map { step in
                 CompletedStep(
                     id: UUID().uuidString,
                     stepId: step.id,
@@ -246,7 +249,8 @@ class AppState: ObservableObject {
                     self?.currentStepIndex = 0
                     self?.refreshDashboardData()
                 case .failure(let error):
-                    self?.showAlert(title: "Error", message: "Failed to complete cleaning run: \(error.localizedDescription)")
+                    break
+                self?.showAlert(title: "Error", message: "Failed to complete cleaning run: \(error.localizedDescription)")
                 }
             }
         }
@@ -267,8 +271,10 @@ class AppState: ObservableObject {
             case .success:
                 // Cleaning run cancelled
                 self?.refreshDashboardData()
+                break
             case .failure(let error):
                 self?.showAlert(title: "Error", message: "Failed to cancel cleaning run: \(error.localizedDescription)")
+                break
             }
         }
     }

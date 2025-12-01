@@ -10,9 +10,9 @@ struct ProtocolsView: View {
         if searchText.isEmpty {
             return appState.protocols
         } else {
-            return appState.protocols.filter { protocol in
-                protocol.name.localizedCaseInsensitiveContains(searchText) ||
-                protocol.description.localizedCaseInsensitiveContains(searchText)
+            return appState.protocols.filter { cleaningProtocol in
+                cleaningProtocol.name.localizedCaseInsensitiveContains(searchText) ||
+                cleaningProtocol.description.localizedCaseInsensitiveContains(searchText)
             }
         }
     }
@@ -50,9 +50,9 @@ struct ProtocolsView: View {
                                     GridItem(.flexible()),
                                     GridItem(.flexible())
                                 ], spacing: 16) {
-                                    ForEach(filteredProtocols) { protocol in
-                                        ProtocolCard(protocol: protocol) {
-                                            selectedProtocol = protocol
+                                    ForEach(filteredProtocols) { cleaningProtocol in
+                                        ProtocolCard(cleaningProtocol: cleaningProtocol) {
+                                            selectedProtocol = cleaningProtocol
                                             showingProtocolDetail = true
                                         }
                                     }
@@ -79,8 +79,8 @@ struct ProtocolsView: View {
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .sheet(isPresented: $showingProtocolDetail) {
-            if let protocol = selectedProtocol {
-                ProtocolDetailView(protocol: protocol)
+            if let cleaningProtocol = selectedProtocol {
+                ProtocolDetailView(cleaningProtocol: cleaningProtocol)
                     .environmentObject(appState)
             }
         }
@@ -136,7 +136,7 @@ struct ProtocolsView: View {
 
 // MARK: - Protocol Card
 struct ProtocolCard: View {
-    let protocol: CleaningProtocol
+    let cleaningProtocol: CleaningProtocol
     let onTap: () -> Void
     
     var body: some View {
@@ -145,12 +145,12 @@ struct ProtocolCard: View {
                 // Header
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(protocol.name)
+                        Text(cleaningProtocol.name)
                             .font(.headline)
                             .foregroundColor(.primaryText)
                             .multilineTextAlignment(.leading)
                         
-                        Text(protocol.description)
+                        Text(cleaningProtocol.description)
                             .font(.caption)
                             .foregroundColor(.secondaryText)
                             .lineLimit(2)
@@ -169,7 +169,7 @@ struct ProtocolCard: View {
                             .font(.caption)
                             .foregroundColor(.accentText)
                         
-                        Text("\(formatDuration(protocol.requiredDuration))")
+                        Text("\(formatDuration(cleaningProtocol.requiredDuration))")
                             .font(.caption)
                             .foregroundColor(.primaryText)
                         
@@ -179,7 +179,7 @@ struct ProtocolCard: View {
                             .font(.caption)
                             .foregroundColor(.accentText)
                         
-                        Text("\(protocol.steps.count) steps")
+                        Text("\(cleaningProtocol.steps.count) steps")
                             .font(.caption)
                             .foregroundColor(.primaryText)
                     }
@@ -189,14 +189,14 @@ struct ProtocolCard: View {
                             .font(.caption)
                             .foregroundColor(.accentText)
                         
-                        Text(protocol.areaType.rawValue.replacingOccurrences(of: "_", with: " ").capitalized)
+                        Text(cleaningProtocol.areaType.rawValue.replacingOccurrences(of: "_", with: " ").capitalized)
                             .font(.caption)
                             .foregroundColor(.primaryText)
                     }
                 }
                 
                 // Progress Bar (mock - deterministic based on protocol ID hash)
-                ProgressView(value: Double(abs(`protocol`.id.hashValue % 30) + 60) / 100.0)
+                ProgressView(value: Double(abs(cleaningProtocol.id.hashValue % 30) + 60) / 100.0)
                     .progressViewStyle(LinearProgressViewStyle(tint: .neonAqua))
                     .scaleEffect(y: 0.8)
             }
@@ -207,7 +207,7 @@ struct ProtocolCard: View {
     }
     
     private var priorityBadge: some View {
-        Text(protocol.priority.rawValue.capitalized)
+        Text(cleaningProtocol.priority.rawValue.capitalized)
             .font(.caption2)
             .fontWeight(.medium)
             .padding(.horizontal, 8)
@@ -218,7 +218,7 @@ struct ProtocolCard: View {
     }
     
     private var priorityColor: Color {
-        switch protocol.priority {
+        switch cleaningProtocol.priority {
         case .critical: return .errorRed
         case .high: return .warningYellow
         case .medium: return .neonAqua

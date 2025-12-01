@@ -44,15 +44,15 @@ struct CleaningRunWorkflow: View {
                         ProtocolSelectionPhaseView(
                             scanResult: scanResult,
                             protocols: appState.protocols
-                        ) { protocol in
-                            startProtocol(protocol)
+                        ) { cleaningProtocol in
+                            startProtocol(cleaningProtocol)
                         }
                     }
                     
                 case .activeProtocol:
-                    if let protocol = selectedProtocol {
+                    if let cleaningProtocol = selectedProtocol {
                         ActiveProtocolPhaseView(
-                            protocol: protocol,
+                            cleaningProtocol: cleaningProtocol,
                             scanResult: scanResult!,
                             completedSteps: $completedSteps,
                             stepNotes: $stepNotes
@@ -119,8 +119,8 @@ struct CleaningRunWorkflow: View {
         
         if let protocolId = result.protocolId {
             // Auto-select protocol if available
-            if let protocol = appState.protocols.first(where: { $0.id == protocolId }) {
-                startProtocol(protocol)
+            if let cleaningProtocol = appState.protocols.first(where: { $0.id == protocolId }) {
+                startProtocol(cleaningProtocol)
             } else {
                 workflowState = .protocolSelection
             }
@@ -129,8 +129,8 @@ struct CleaningRunWorkflow: View {
         }
     }
     
-    private func startProtocol(_ protocol: CleaningProtocol) {
-        selectedProtocol = protocol
+    private func startProtocol(_ cleaningProtocol: CleaningProtocol) {
+        selectedProtocol = cleaningProtocol
         completedSteps = []
         stepNotes = [:]
         workflowState = .activeProtocol
@@ -138,13 +138,13 @@ struct CleaningRunWorkflow: View {
     
     private func submitCleaningRun() {
         guard let user = authService.currentUser,
-              let protocol = selectedProtocol,
+              let cleaningProtocol = selectedProtocol,
               let scanResult = scanResult else { return }
         
         isSubmitting = true
         
         // Create exceptions for missed steps
-        let missedSteps = protocol.steps.filter { !completedSteps.contains($0.id) }
+        let missedSteps = cleaningProtocol.steps.filter { !completedSteps.contains($0.id) }
         let exceptions = missedSteps.map { step in
             CleaningException(
                 id: UUID().uuidString,
@@ -160,7 +160,7 @@ struct CleaningRunWorkflow: View {
         let cleaningRun = CleaningRun(
             id: UUID().uuidString,
             userId: user.id,
-            protocolId: protocol.id,
+            protocolId: cleaningProtocol.id,
             roomId: scanResult.areaId,
             stepsCompleted: Array(completedSteps),
             completedAt: Date(),
@@ -185,12 +185,12 @@ struct CleaningRunWorkflow: View {
     }
     
     private func calculateComplianceScore() -> Double {
-        guard let protocol = selectedProtocol else { return 0 }
+        guard let cleaningProtocol = selectedProtocol else { return 0 }
         
         let completedCount = completedSteps.count
-        let totalCount = protocol.steps.count
-        let requiredCount = protocol.steps.filter { $0.required }.count
-        let completedRequiredCount = protocol.steps.filter { step in
+        let totalCount = cleaningProtocol.steps.count
+        let requiredCount = cleaningProtocol.steps.filter { $0.required }.count
+        let completedRequiredCount = cleaningProtocol.steps.filter { step in
             step.required && completedSteps.contains(step.id)
         }.count
         
@@ -358,9 +358,9 @@ struct ProtocolSelectionPhaseView: View {
             // Protocol List
             ScrollView {
                 LazyVStack(spacing: 16) {
-                    ForEach(protocols) { protocol in
-                        ProtocolSelectionCard(protocol: protocol) {
-                            onProtocolSelected(protocol)
+                    ForEach(protocols) { cleaningProtocol in
+                        ProtocolSelectionCard(cleaningProtocol: cleaningProtocol) {
+                            onProtocolSelected(cleaningProtocol)
                         }
                     }
                 }
@@ -390,7 +390,7 @@ struct ActiveProtocolPhaseView: View {
                     .fontWeight(.bold)
                     .foregroundColor(.primaryText)
                 
-                Text("\(scanResult.areaName) • \(protocol.name)")
+                Text("\(scanResult.areaName) • \(cleaningProtocol.name)")
                     .font(.subheadline)
                     .foregroundColor(.accentText)
                 
@@ -403,12 +403,12 @@ struct ActiveProtocolPhaseView: View {
                         
                         Spacer()
                         
-                        Text("\(completedSteps.count) of \(protocol.steps.count) steps")
+                        Text("\(completedSteps.count) of \(cleaningProtocol.steps.count) steps")
                             .font(.caption)
                             .foregroundColor(.accentText)
                     }
                     
-                    ProgressView(value: Double(completedSteps.count), total: Double(protocol.steps.count))
+                    ProgressView(value: Double(completedSteps.count), total: Double(cleaningProtocol.steps.count))
                         .progressViewStyle(LinearProgressViewStyle(tint: .neonAqua))
                 }
             }
@@ -416,26 +416,21 @@ struct ActiveProtocolPhaseView: View {
             .glassCard()
             
             // Current Step
-            if currentStepIndex < protocol.steps.count {
-                let currentStep = protocol.steps[currentStepIndex]
+            if currentStepIndex < cleaningProtocol.steps.count {
+                let currentStep = cleaningProtocol.steps[currentStepIndex]
                 let isCompleted = completedSteps.contains(currentStep.id)
                 
-                VStack(spacing: 16) {
-                    Text("Step \(currentStepIndex + 1) of \(protocol.steps.count)")
-                        .font(.headline)
-                        .foregroundColor(.primaryText)
-                    
-                    ActiveStepCard(
-                        step: currentStep,
-                        isCompleted: isCompleted,
-                        note: stepNotes[currentStep.id] ?? ""
-                    ) { note in
-                        stepNotes[currentStep.id] = note
-                    }
-                    
-                    // Action Buttons
-                    HStack(spacing: 16) {
-                        if !isCompleted {
+                ActiveStepCard(
+                    step: currentStep,
+                    isCompleted: isCompleted,
+                    note: stepNotes[cleaningProtocol.steps[currentStepIndex].id] ?? ""
+                ) { note in
+                    stepNotes[cleaningProtocol.steps[currentStepIndex].id] = note
+                }
+                
+                // Action Buttons
+                HStack(spacing: 16) {
+                    if !isCompleted {
                             Button(action: {
                                 completeStep(currentStep)
                             }) {
@@ -488,7 +483,7 @@ struct ActiveProtocolPhaseView: View {
             }
             
             // Step Navigation
-            if currentStepIndex > 0 || currentStepIndex < protocol.steps.count - 1 {
+            if currentStepIndex > 0 || currentStepIndex < cleaningProtocol.steps.count - 1 {
                 HStack {
                     Button(action: {
                         if currentStepIndex > 0 {
@@ -504,7 +499,7 @@ struct ActiveProtocolPhaseView: View {
                     Spacer()
                     
                     Button(action: {
-                        if currentStepIndex < protocol.steps.count - 1 {
+                        if currentStepIndex < cleaningProtocol.steps.count - 1 {
                             currentStepIndex += 1
                         }
                     }) {
@@ -512,13 +507,13 @@ struct ActiveProtocolPhaseView: View {
                             .font(.title2)
                             .foregroundColor(.neonAqua)
                     }
-                    .disabled(currentStepIndex == protocol.steps.count - 1)
+                    .disabled(currentStepIndex == cleaningProtocol.steps.count - 1)
                 }
                 .padding()
             }
             
             // Complete Button
-            if completedSteps.count == protocol.steps.count {
+            if completedSteps.count == cleaningProtocol.steps.count {
                 Button(action: onComplete) {
                     HStack {
                         Image(systemName: "checkmark.shield.fill")
@@ -544,12 +539,12 @@ struct ActiveProtocolPhaseView: View {
             }
         }
         .sheet(isPresented: $showingStepNotes) {
-            if currentStepIndex < protocol.steps.count {
+            if currentStepIndex < cleaningProtocol.steps.count {
                 StepNotesView(
-                    step: protocol.steps[currentStepIndex],
-                    note: stepNotes[protocol.steps[currentStepIndex].id] ?? ""
+                    step: cleaningProtocol.steps[currentStepIndex],
+                    note: stepNotes[cleaningProtocol.steps[currentStepIndex].id] ?? ""
                 ) { note in
-                    stepNotes[protocol.steps[currentStepIndex].id] = note
+                    stepNotes[cleaningProtocol.steps[currentStepIndex].id] = note
                 }
             }
         }
@@ -563,7 +558,7 @@ struct ActiveProtocolPhaseView: View {
         impactFeedback.impactOccurred()
         
         // Move to next step if available
-        if currentStepIndex < protocol.steps.count - 1 {
+        if currentStepIndex < cleaningProtocol.steps.count - 1 {
             currentStepIndex += 1
         }
     }
@@ -571,22 +566,21 @@ struct ActiveProtocolPhaseView: View {
 
 // MARK: - Review Phase View
 struct ReviewPhaseView: View {
-    let protocol: CleaningProtocol
+    let cleaningProtocol: CleaningProtocol
     let scanResult: ScanResult
     let completedSteps: Set<String>
     let stepNotes: [String: String]
     let onSubmit: () -> Void
     var complianceScore: Double {
-        let requiredSteps = protocol.steps.filter { $0.required }
+        let requiredSteps = cleaningProtocol.steps.filter { $0.required }
         let completedRequiredSteps = requiredSteps.filter { completedSteps.contains($0.id) }
         
         if requiredSteps.isEmpty {
-            guard !protocol.steps.isEmpty else { return 100.0 }
-            return (Double(completedSteps.count) / Double(protocol.steps.count)) * 100
+            guard !cleaningProtocol.steps.isEmpty else { return 100.0 }
+            return (Double(completedSteps.count) / Double(cleaningProtocol.steps.count)) * 100
         } else {
             return (Double(completedRequiredSteps.count) / Double(requiredSteps.count)) * 100
         }
-    }
     }
     
     var body: some View {
@@ -617,8 +611,8 @@ struct ReviewPhaseView: View {
                     
                     VStack(spacing: 12) {
                         ReviewRow(title: "Area", value: scanResult.areaName)
-                        ReviewRow(title: "Protocol", value: protocol.name)
-                        ReviewRow(title: "Completed Steps", value: "\(completedSteps.count) of \(protocol.steps.count)")
+                        ReviewRow(title: "Protocol", value: cleaningProtocol.name)
+                        ReviewRow(title: "Completed Steps", value: "\(completedSteps.count) of \(cleaningProtocol.steps.count)")
                         ReviewRow(title: "Compliance Score", value: "\(Int(complianceScore))%")
                         ReviewRow(title: "Verification Method", value: scanResult.type == .qr ? "QR Code" : "NFC Tag")
                     }
@@ -633,7 +627,7 @@ struct ReviewPhaseView: View {
                         .foregroundColor(.primaryText)
                     
                     VStack(spacing: 12) {
-                        ForEach(Array(protocol.steps.enumerated()), id: \.element.id) { index, step in
+                        ForEach(Array(cleaningProtocol.steps.enumerated()), id: \.element.id) { index, step in
                             StepReviewRow(
                                 stepNumber: index + 1,
                                 step: step,
@@ -773,14 +767,14 @@ struct InstructionItem: View {
 }
 
 struct ProtocolSelectionCard: View {
-    let protocol: CleaningProtocol
+    let cleaningProtocol: CleaningProtocol
     let onTap: () -> Void
     
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    Text(protocol.name)
+                    Text(cleaningProtocol.name)
                         .font(.headline)
                         .foregroundColor(.primaryText)
                     
@@ -789,7 +783,7 @@ struct ProtocolSelectionCard: View {
                     priorityBadge
                 }
                 
-                Text(protocol.description)
+                Text(cleaningProtocol.description)
                     .font(.subheadline)
                     .foregroundColor(.secondaryText)
                     .lineLimit(2)
@@ -799,7 +793,7 @@ struct ProtocolSelectionCard: View {
                         .font(.caption)
                         .foregroundColor(.accentText)
                     
-                    Text("\(Int(protocol.requiredDuration / 60)) min")
+                    Text("\(Int(cleaningProtocol.requiredDuration / 60)) min")
                         .font(.caption)
                         .foregroundColor(.primaryText)
                     
@@ -809,7 +803,7 @@ struct ProtocolSelectionCard: View {
                         .font(.caption)
                         .foregroundColor(.accentText)
                     
-                    Text("\(protocol.steps.count) steps")
+                    Text("\(cleaningProtocol.steps.count) steps")
                         .font(.caption)
                         .foregroundColor(.primaryText)
                 }
@@ -821,7 +815,7 @@ struct ProtocolSelectionCard: View {
     }
     
     private var priorityBadge: some View {
-        Text(protocol.priority.rawValue.capitalized)
+        Text(cleaningProtocol.priority.rawValue.capitalized)
             .font(.caption2)
             .fontWeight(.medium)
             .padding(.horizontal, 8)
@@ -832,7 +826,7 @@ struct ProtocolSelectionCard: View {
     }
     
     private var priorityColor: Color {
-        switch protocol.priority {
+        switch cleaningProtocol.priority {
         case .critical: return .errorRed
         case .high: return .warningYellow
         case .medium: return .neonAqua
@@ -848,7 +842,7 @@ struct ActiveStepCard: View {
     let onNoteChange: (String) -> Void
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(step.name)
