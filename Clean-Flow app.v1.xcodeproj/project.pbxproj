@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		63B0BDBC2EDE06C4000E5278 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63B0BDB42EDE06C4000E5278 /* Assets.xcassets */; };
+		63B0BDBD2EDE06C4000E5278 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 63B0BDB52EDE06C4000E5278 /* Info.plist */; };
+		63B0BDBE2EDE06C4000E5278 /* CleanFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B0BDB72EDE06C4000E5278 /* CleanFlowApp.swift */; };
+		63B0BDBF2EDE06C4000E5278 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B0BDB92EDE06C4000E5278 /* ContentView.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		63B0BD982EDE06AC000E5278 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +34,10 @@
 		63B0BD8A2EDE06AC000E5278 /* Clean-Flow app.v1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Clean-Flow app.v1.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63B0BD972EDE06AC000E5278 /* Clean-Flow app.v1Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Clean-Flow app.v1Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63B0BDA12EDE06AC000E5278 /* Clean-Flow app.v1UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Clean-Flow app.v1UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		63B0BDB42EDE06C4000E5278 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		63B0BDB52EDE06C4000E5278 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		63B0BDB72EDE06C4000E5278 /* CleanFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanFlowApp.swift; sourceTree = "<group>"; };
+		63B0BDB92EDE06C4000E5278 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +86,9 @@
 		63B0BD812EDE06AC000E5278 = {
 			isa = PBXGroup;
 			children = (
+				63B0BDB42EDE06C4000E5278 /* Assets.xcassets */,
+				63B0BDB62EDE06C4000E5278 /* Resources */,
+				63B0BDBB2EDE06C4000E5278 /* Sources */,
 				63B0BD8C2EDE06AC000E5278 /* Clean-Flow app.v1 */,
 				63B0BD9A2EDE06AC000E5278 /* Clean-Flow app.v1Tests */,
 				63B0BDA42EDE06AC000E5278 /* Clean-Flow app.v1UITests */,
@@ -90,6 +104,39 @@
 				63B0BDA12EDE06AC000E5278 /* Clean-Flow app.v1UITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		63B0BDB62EDE06C4000E5278 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				63B0BDB52EDE06C4000E5278 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		63B0BDB82EDE06C4000E5278 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				63B0BDB72EDE06C4000E5278 /* CleanFlowApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		63B0BDBA2EDE06C4000E5278 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				63B0BDB92EDE06C4000E5278 /* ContentView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		63B0BDBB2EDE06C4000E5278 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				63B0BDB82EDE06C4000E5278 /* App */,
+				63B0BDBA2EDE06C4000E5278 /* Views */,
+			);
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -212,6 +259,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			files = (
+				63B0BDBC2EDE06C4000E5278 /* Assets.xcassets in Resources */,
+			);
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +286,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63B0BDBE2EDE06C4000E5278 /* CleanFlowApp.swift in Sources */,
+				63B0BDBF2EDE06C4000E5278 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
