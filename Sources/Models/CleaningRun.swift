@@ -36,6 +36,14 @@ struct CleaningRun: Codable, Identifiable {
     }
 }
 
+enum CleaningStatus: String, Codable, CaseIterable {
+    case pending = "pending"
+    case inProgress = "in_progress"
+    case completed = "completed"
+    case verified = "verified"
+    case failed = "failed"
+}
+
 struct CleaningException: Codable, Identifiable {
     let id: String
     let stepId: String

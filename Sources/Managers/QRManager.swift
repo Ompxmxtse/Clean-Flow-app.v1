@@ -2,6 +2,7 @@ import Foundation
 import AVFoundation
 import SwiftUI
 import UIKit
+import Combine
 
 class QRManager: NSObject, ObservableObject, AVCaptureMetadataOutputObjectsDelegate {
     @Published var isScanning = false

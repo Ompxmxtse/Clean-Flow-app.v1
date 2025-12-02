@@ -1,6 +1,7 @@
 import Foundation
 import CoreNFC
 import UIKit
+import Combine
 
 @available(iOS 13.0, *)
 class NFCManager: NSObject, ObservableObject, NFCNDEFReaderSessionDelegate {

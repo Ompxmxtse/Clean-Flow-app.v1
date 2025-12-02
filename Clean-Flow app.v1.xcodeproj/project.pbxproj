@@ -7,14 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		63A628B72EDE36A400140621 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 63A628B62EDE36A400140621 /* FirebaseAuth */; };
-		63A628B92EDE36A400140621 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 63A628B82EDE36A400140621 /* FirebaseCore */; };
-		63A628BB2EDE36A400140621 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 63A628BA2EDE36A400140621 /* FirebaseDatabase */; };
-		63A628BD2EDE36A400140621 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 63A628BC2EDE36A400140621 /* FirebaseFirestore */; };
 		63A628FC2EDE3C7A00140621 /* PersonnelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628E62EDE3C7A00140621 /* PersonnelView.swift */; };
 		63A628FD2EDE3C7A00140621 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628DA2EDE3C7A00140621 /* LoginView.swift */; };
 		63A628FE2EDE3C7A00140621 /* StaffListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628EA2EDE3C7A00140621 /* StaffListViewModel.swift */; };
-		63A628FF2EDE3C7A00140621 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628FA2EDE3C7A00140621 /* ContentView.swift */; };
 		63A629002EDE3C7A00140621 /* StepChecklistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628F12EDE3C7A00140621 /* StepChecklistView.swift */; };
 		63A629012EDE3C7A00140621 /* AuditListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628D72EDE3C7A00140621 /* AuditListViewModel.swift */; };
 		63A629022EDE3C7A00140621 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628C32EDE3C7A00140621 /* AppState.swift */; };
@@ -35,7 +30,6 @@
 		63A629112EDE3C7A00140621 /* CleaningProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628C72EDE3C7A00140621 /* CleaningProtocol.swift */; };
 		63A629122EDE3C7A00140621 /* PasswordResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628DB2EDE3C7A00140621 /* PasswordResetView.swift */; };
 		63A629132EDE3C7A00140621 /* ScanResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628F42EDE3C7A00140621 /* ScanResultView.swift */; };
-		63A629142EDE3C7A00140621 /* CleanFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628BE2EDE3C7A00140621 /* CleanFlowApp.swift */; };
 		63A629152EDE3C7A00140621 /* EnhancedNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628E42EDE3C7A00140621 /* EnhancedNavigation.swift */; };
 		63A629162EDE3C7A00140621 /* UserDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628C12EDE3C7A00140621 /* UserDataSource.swift */; };
 		63A629172EDE3C7A00140621 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A628C02EDE3C7A00140621 /* MockData.swift */; };
@@ -57,6 +51,11 @@
 		63B0BDBC2EDE06C4000E5278 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63B0BDB42EDE06C4000E5278 /* Assets.xcassets */; };
 		63B0BDBE2EDE06C4000E5278 /* CleanFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B0BDB72EDE06C4000E5278 /* CleanFlowApp.swift */; };
 		63B0BDBF2EDE06C4000E5278 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B0BDB92EDE06C4000E5278 /* ContentView.swift */; };
+		63E66BEC2EDF03580083F405 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 63E66BEB2EDF03580083F405 /* FirebaseAuth */; };
+		63E66BEE2EDF03580083F405 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 63E66BED2EDF03580083F405 /* FirebaseCore */; };
+		63E66BF02EDF03580083F405 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 63E66BEF2EDF03580083F405 /* FirebaseDatabase */; };
+		63E66BF22EDF03580083F405 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 63E66BF12EDF03580083F405 /* FirebaseFirestore */; };
+		63E66BF42EDF03580083F405 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 63E66BF32EDF03580083F405 /* FirebaseStorage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,7 +76,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		63A628BE2EDE3C7A00140621 /* CleanFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanFlowApp.swift; sourceTree = "<group>"; };
 		63A628C02EDE3C7A00140621 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		63A628C12EDE3C7A00140621 /* UserDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataSource.swift; sourceTree = "<group>"; };
 		63A628C32EDE3C7A00140621 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -119,7 +117,6 @@
 		63A628F42EDE3C7A00140621 /* ScanResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanResultView.swift; sourceTree = "<group>"; };
 		63A628F62EDE3C7A00140621 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		63A628F82EDE3C7A00140621 /* CleaningRunWorkflow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleaningRunWorkflow.swift; sourceTree = "<group>"; };
-		63A628FA2EDE3C7A00140621 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		63B0BD8A2EDE06AC000E5278 /* Clean-Flow app.v1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Clean-Flow app.v1.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63B0BD972EDE06AC000E5278 /* Clean-Flow app.v1Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Clean-Flow app.v1Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63B0BDA12EDE06AC000E5278 /* Clean-Flow app.v1UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Clean-Flow app.v1UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -152,10 +149,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				63A628BB2EDE36A400140621 /* FirebaseDatabase in Frameworks */,
-				63A628BD2EDE36A400140621 /* FirebaseFirestore in Frameworks */,
-				63A628B92EDE36A400140621 /* FirebaseCore in Frameworks */,
-				63A628B72EDE36A400140621 /* FirebaseAuth in Frameworks */,
+				63E66BF02EDF03580083F405 /* FirebaseDatabase in Frameworks */,
+				63E66BF22EDF03580083F405 /* FirebaseFirestore in Frameworks */,
+				63E66BEE2EDF03580083F405 /* FirebaseCore in Frameworks */,
+				63E66BF42EDF03580083F405 /* FirebaseStorage in Frameworks */,
+				63E66BEC2EDF03580083F405 /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -179,7 +177,6 @@
 		63A628BF2EDE3C7A00140621 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				63A628BE2EDE3C7A00140621 /* CleanFlowApp.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -359,7 +356,6 @@
 				63A628F52EDE3C7A00140621 /* Scanner */,
 				63A628F72EDE3C7A00140621 /* Settings */,
 				63A628F92EDE3C7A00140621 /* Workflows */,
-				63A628FA2EDE3C7A00140621 /* ContentView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -447,10 +443,11 @@
 			);
 			name = "Clean-Flow app.v1";
 			packageProductDependencies = (
-				63A628B62EDE36A400140621 /* FirebaseAuth */,
-				63A628B82EDE36A400140621 /* FirebaseCore */,
-				63A628BA2EDE36A400140621 /* FirebaseDatabase */,
-				63A628BC2EDE36A400140621 /* FirebaseFirestore */,
+				63E66BEB2EDF03580083F405 /* FirebaseAuth */,
+				63E66BED2EDF03580083F405 /* FirebaseCore */,
+				63E66BEF2EDF03580083F405 /* FirebaseDatabase */,
+				63E66BF12EDF03580083F405 /* FirebaseFirestore */,
+				63E66BF32EDF03580083F405 /* FirebaseStorage */,
 			);
 			productName = "Clean-Flow app.v1";
 			productReference = 63B0BD8A2EDE06AC000E5278 /* Clean-Flow app.v1.app */;
@@ -535,7 +532,7 @@
 			mainGroup = 63B0BD812EDE06AC000E5278;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				63A628B52EDE36A400140621 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				63E66BEA2EDF03580083F405 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 63B0BD8B2EDE06AC000E5278 /* Products */;
@@ -584,7 +581,6 @@
 				63A628FC2EDE3C7A00140621 /* PersonnelView.swift in Sources */,
 				63A628FD2EDE3C7A00140621 /* LoginView.swift in Sources */,
 				63A628FE2EDE3C7A00140621 /* StaffListViewModel.swift in Sources */,
-				63A628FF2EDE3C7A00140621 /* ContentView.swift in Sources */,
 				63A629002EDE3C7A00140621 /* StepChecklistView.swift in Sources */,
 				63A629012EDE3C7A00140621 /* AuditListViewModel.swift in Sources */,
 				63A629022EDE3C7A00140621 /* AppState.swift in Sources */,
@@ -594,7 +590,6 @@
 				63A629062EDE3C7A00140621 /* ScannerView.swift in Sources */,
 				63A629072EDE3C7A00140621 /* QRManager.swift in Sources */,
 				63A629082EDE3C7A00140621 /* ProtocolDetailView.swift in Sources */,
-				63A629092EDE3C7A00140621 /* ScannerUITests.swift in Sources */,
 				63A6290A2EDE3C7A00140621 /* ScannerService.swift in Sources */,
 				63A6290B2EDE3C7A00140621 /* AuditListView.swift in Sources */,
 				63A6290C2EDE3C7A00140621 /* CleaningRun.swift in Sources */,
@@ -605,12 +600,10 @@
 				63A629112EDE3C7A00140621 /* CleaningProtocol.swift in Sources */,
 				63A629122EDE3C7A00140621 /* PasswordResetView.swift in Sources */,
 				63A629132EDE3C7A00140621 /* ScanResultView.swift in Sources */,
-				63A629142EDE3C7A00140621 /* CleanFlowApp.swift in Sources */,
 				63A629152EDE3C7A00140621 /* EnhancedNavigation.swift in Sources */,
 				63A629162EDE3C7A00140621 /* UserDataSource.swift in Sources */,
 				63A629172EDE3C7A00140621 /* MockData.swift in Sources */,
 				63A629182EDE3C7A00140621 /* StaffDetailView.swift in Sources */,
-				63A629192EDE3C7A00140621 /* AuthServiceTests.swift in Sources */,
 				63A6291A2EDE3C7A00140621 /* AuditsView.swift in Sources */,
 				63A6291B2EDE3C7A00140621 /* DashboardView.swift in Sources */,
 				63A6291C2EDE3C7A00140621 /* RegistrationView.swift in Sources */,
@@ -638,6 +631,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63A629092EDE3C7A00140621 /* ScannerUITests.swift in Sources */,
+				63A629192EDE3C7A00140621 /* AuthServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -799,6 +794,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Tembe-Tech.Clean-Flow-app-v1";
+				PRODUCT_MODULE_NAME = Clean_Flow_app_v1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -831,6 +827,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Tembe-Tech.Clean-Flow-app-v1";
+				PRODUCT_MODULE_NAME = Clean_Flow_app_v1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -968,9 +965,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		63A628B52EDE36A400140621 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		63E66BEA2EDF03580083F405 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 12.6.0;
@@ -979,25 +976,30 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		63A628B62EDE36A400140621 /* FirebaseAuth */ = {
+		63E66BEB2EDF03580083F405 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 63A628B52EDE36A400140621 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = 63E66BEA2EDF03580083F405 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
 		};
-		63A628B82EDE36A400140621 /* FirebaseCore */ = {
+		63E66BED2EDF03580083F405 /* FirebaseCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 63A628B52EDE36A400140621 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = 63E66BEA2EDF03580083F405 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCore;
 		};
-		63A628BA2EDE36A400140621 /* FirebaseDatabase */ = {
+		63E66BEF2EDF03580083F405 /* FirebaseDatabase */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 63A628B52EDE36A400140621 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = 63E66BEA2EDF03580083F405 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseDatabase;
 		};
-		63A628BC2EDE36A400140621 /* FirebaseFirestore */ = {
+		63E66BF12EDF03580083F405 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 63A628B52EDE36A400140621 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = 63E66BEA2EDF03580083F405 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		63E66BF32EDF03580083F405 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 63E66BEA2EDF03580083F405 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

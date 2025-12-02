@@ -1,6 +1,6 @@
 import XCTest
-@testable import CleanFlowApp
 import FirebaseAuth
+@testable import Clean_Flow_app_v1
 
 @MainActor
 class AuthServiceTests: XCTestCase {
@@ -264,3 +264,4 @@ class AuthDataResult {
         self.user = user
     }
 }
+

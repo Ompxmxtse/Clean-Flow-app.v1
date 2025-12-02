@@ -61,6 +61,7 @@ struct StaffDetailView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        // Note: Only one .sheet(isPresented:) can be presented at a time. Setting both bools to true will only display one sheet.
         .sheet(isPresented: $showingEditProfile) {
             EditStaffView(user: user)
         }
@@ -125,7 +126,7 @@ struct StaffDetailView: View {
                 UserInfoRow(
                     icon: "person.fill",
                     title: "User ID",
-                    value: user.id.suffix(8)
+                    value: String(user.id.suffix(8))
                 )
                 
                 UserInfoRow(
@@ -405,119 +406,21 @@ struct StaffDetailView: View {
     }
     
     private func formatDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
+        Formatter.date.string(from: date)
+    }
+    
+    private struct Formatter {
+        static let date: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .short
+            return formatter
+        }()
     }
 }
 
 // MARK: - Supporting Views
-struct UserInfoRow: View {
-    let icon: String
-    let title: String
-    let value: String
-    
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundColor(Color(red: 43/255, green: 203/255, blue: 255/255))
-                .frame(width: 24)
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.caption)
-                    .foregroundColor(Color.white.opacity(0.6))
-                
-                Text(value)
-                    .font(.subheadline)
-                    .foregroundColor(.white)
-            }
-            
-            Spacer()
-        }
-        .padding(.vertical, 4)
-    }
-}
-
-struct ActivityStatCard: View {
-    let title: String
-    let value: String
-    let icon: String
-    let color: Color
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundColor(color)
-            
-            Text(value)
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-            
-            Text(title)
-                .font(.caption)
-                .foregroundColor(Color.white.opacity(0.6))
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.white.opacity(0.05))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                )
-        )
-    }
-}
-
-struct ActivityRow: View {
-    let activity: UserActivity
-    
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: activity.icon)
-                .font(.title3)
-                .foregroundColor(activity.color)
-                .frame(width: 24)
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text(activity.description)
-                    .font(.subheadline)
-                    .foregroundColor(.white)
-                
-                HStack {
-                    Text(activity.areaName)
-                        .font(.caption)
-                        .foregroundColor(Color(red: 43/255, green: 203/255, blue: 255/255))
-                    
-                    Text("•")
-                        .font(.caption)
-                        .foregroundColor(Color.white.opacity(0.4))
-                    
-                    Text(formatTime(activity.timestamp))
-                        .font(.caption)
-                        .foregroundColor(Color.white.opacity(0.4))
-                }
-            }
-            
-            Spacer()
-        }
-        .padding(.vertical, 4)
-    }
-    
-    private func formatTime(_ date: Date) -> String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .abbreviated
-        return formatter.localizedString(for: date, relativeTo: Date())
-    }
-}
-
 #Preview {
-    StaffDetailView(user: User.mock)
+    StaffDetailView(user: (User.mock ?? User(id: "PREVIEW", name: "Preview User", email: "preview@example.com", role: .cleaner, department: "Preview", isActive: true, createdAt: Date(), lastLogin: Date()))) // Fallback to default preview user if User.mock is not available.
 }
+

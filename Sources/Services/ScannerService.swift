@@ -3,11 +3,14 @@ import AVFoundation
 import CoreNFC
 import UserNotifications
 import UIKit
+import Combine
 
 class ScannerService: NSObject, ObservableObject {
     @Published var isScanning = false
     @Published var scanResult: ScanResult?
     @Published var errorMessage: String?
+    
+    static let shared = ScannerService()
     
     // MARK: - QR Scanner
     func startQRScanner(completion: @escaping (Result<String, Error>) -> Void) {

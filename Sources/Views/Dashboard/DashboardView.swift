@@ -223,69 +223,6 @@ struct DashboardView: View {
 }
 
 // MARK: - Supporting Views
-struct StatCard: View {
-    let title: String
-    let value: String
-    let subtitle: String
-    let icon: String
-    let color: Color
-    let trend: TrendDirection?
-    
-    enum TrendDirection {
-        case up, down, stable
-    }
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Image(systemName: icon)
-                    .font(.title3)
-                    .foregroundColor(color)
-                
-                Spacer()
-                
-                if let trend = trend {
-                    Image(systemName: trendIcon(for: trend))
-                        .font(.caption)
-                        .foregroundColor(trendColor(for: trend))
-                }
-            }
-            
-            Text(value)
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(.primaryText)
-            
-            Text(subtitle)
-                .font(.caption)
-                .foregroundColor(.secondaryText)
-            
-            Text(title)
-                .font(.caption)
-                .foregroundColor(.accentText)
-                .padding(.top, 4)
-        }
-        .padding()
-        .glassCard()
-    }
-    
-    private func trendIcon(for trend: TrendDirection) -> String {
-        switch trend {
-        case .up: return "arrow.up.right"
-        case .down: return "arrow.down.right"
-        case .stable: return "arrow.right"
-        }
-    }
-    
-    private func trendColor(for trend: TrendDirection) -> Color {
-        switch trend {
-        case .up: return .successGreen
-        case .down: return .errorRed
-        case .stable: return .secondaryText
-        }
-    }
-}
-
 struct QuickActionButton: View {
     let title: String
     let icon: String

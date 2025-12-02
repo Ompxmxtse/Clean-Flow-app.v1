@@ -142,167 +142,16 @@ struct ScannerView: View {
             case .failure(let error):
                 // Scanning error - Log in production
                 print("Scanning error: \(error)")
-                    VStack(spacing: 8) {
-                        Image(systemName: mode.icon)
-                            .font(.title2)
-                            .foregroundColor(scanMode == mode ? .deepNavy : .neonAqua)
-                        
-                        Text(mode.rawValue)
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(scanMode == mode ? .deepNavy : .primaryText)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(scanMode == mode ? Color.neonAqua : Color.glassBackground)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.neonAqua, lineWidth: scanMode == mode ? 0 : 1)
-                            )
-                    )
-                }
-                .buttonStyle(PlainButtonStyle())
             }
         }
     }
     
-    // MARK: - Scanner Content
-    @ViewBuilder
-    private var scannerContent: some View {
-        switch scanMode {
-        case .qr:
-            QRScannerView(qrManager: qrManager) { result in
-                handleQRResult(result)
-            }
-        case .nfc:
-            NFCScannerView(nfcManager: nfcManager) { result in
-                handleNFCResult(result)
-            }
-        }
+    private func toggleFlash() {
+        // Toggle flash functionality
     }
     
-    // MARK: - Instructions Section
-    private var instructionsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Instructions")
-                .font(.headline)
-                .foregroundColor(.primaryText)
-            
-            VStack(alignment: .leading, spacing: 8) {
-                if scanMode == .qr {
-                    InstructionRow(
-                        icon: "qrcode",
-                        text: "Position QR code within the frame",
-                        color: .neonAqua
-                    )
-                    InstructionRow(
-                        icon: "hand.tap",
-                        text: "Hold steady for automatic detection",
-                        color: .successGreen
-                    )
-                    InstructionRow(
-                        icon: "checkmark.circle",
-                        text: "Verify area and protocol information",
-                        color: .warningYellow
-                    )
-                } else {
-                    InstructionRow(
-                        icon: "antenna.radiowaves.left.and.right",
-                        text: "Hold iPhone near NFC tag",
-                        color: .neonAqua
-                    )
-                    InstructionRow(
-                        icon: "touchid",
-                        text: "Keep phone close until detection",
-                        color: .successGreen
-                    )
-                    InstructionRow(
-                        icon: "checkmark.circle",
-                        text: "Confirm area information",
-                        color: .warningYellow
-                    )
-                }
-            }
-        }
-        .padding()
-        .glassCard()
-    }
-    
-    // MARK: - Helper Methods
-    private func stopCurrentScan() {
-        qrManager.stopScanning()
-        if #available(iOS 13.0, *) {
-            nfcManager.stopScanning()
-        }
-    }
-    
-    private func handleQRResult(_ result: Result<String, Error>) {
-        switch result {
-        case .success(let qrData):
-            let validation = qrManager.validateQRCode(qrData)
-            if validation.isValid {
-                guard let areaId = validation.areaId,
-                      let protocolId = validation.protocolId else {
-                    qrManager.errorMessage = "Invalid scan data"
-                    return
-                }
-                let scanResult = ScanResult(
-                    type: .qr,
-                    areaId: areaId,
-                    protocolId: protocolId,
-                    areaName: "Area \(areaId)",
-                    protocolName: "Protocol \(protocolId)",
-                    timestamp: Date(),
-                    isValid: true
-                )
-                self.scanResult = scanResult
-                self.showingResult = true
-                
-                // Trigger haptic feedback
-                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-                impactFeedback.impactOccurred()
-            } else {
-                qrManager.errorMessage = validation.error ?? "Invalid QR code"
-            }
-        case .failure(let error):
-            qrManager.errorMessage = error.localizedDescription
-        }
-    }
-    
-    private func handleNFCResult(_ result: Result<String, Error>) {
-        switch result {
-        case .success(let tagData):
-            if #available(iOS 13.0, *) {
-                let validation = nfcManager.validateNFCTag(tagData)
-                if validation.isValid {
-                    guard let areaId = validation.areaId else {
-                        nfcManager.errorMessage = "Invalid scan data"
-                        return
-                    }
-                    let scanResult = ScanResult(
-                        type: .nfc,
-                        areaId: areaId,
-                        protocolId: nil,
-                        areaName: "Area \(areaId)",
-                        protocolName: nil,
-                        timestamp: Date(),
-                        isValid: true
-                    )
-                    self.scanResult = scanResult
-                    self.showingResult = true
-                    
-                    // Trigger haptic feedback
-                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-                    impactFeedback.impactOccurred()
-                } else {
-                    nfcManager.errorMessage = validation.error ?? "Invalid NFC tag"
-                }
-            }
-        case .failure(let error):
-            nfcManager.errorMessage = error.localizedDescription
-        }
+    private func scanManually() {
+        // Manual scan functionality
     }
 }
 
@@ -320,6 +169,15 @@ struct QRScannerView: UIViewRepresentable {
         scannerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         
         view.addSubview(scannerView)
+        
+        return view
+    }
+    
+    func updateUIView(_ uiView: UIView, context: Context) {
+        // Update preview
+    }
+}
+
 class QRScannerUIView: UIView {
     private let qrManager: QRManager
     private let onResult: (Result<String, Error>) -> Void
@@ -339,6 +197,41 @@ class QRScannerUIView: UIView {
     
     deinit {
         qrManager.stopScanning()
+    }
+    
+    private func setupScanner() {
+        // Get the preview layer from QRManager
+        guard let previewLayer = qrManager.getPreviewLayer() else {
+            onResult(.failure(NSError(domain: "QRScanner", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to setup camera preview"])))
+            return
+        }
+        
+        // Configure preview layer
+        previewLayer.frame = self.layer.bounds
+        previewLayer.videoGravity = .resizeAspectFill
+        self.layer.addSublayer(previewLayer)
+        self.previewLayer = previewLayer
+        
+        // Start scanning
+        qrManager.startScanning { [weak self] result in
+            DispatchQueue.main.async {
+                self?.onResult(result)
+            }
+        }
+        
+        // Add tap gesture for focus (optional)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        self.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func handleTap(_ gesture: UITapGestureRecognizer) {
+        let point = gesture.location(in: self)
+        // Focus functionality could be added here if needed
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        previewLayer?.frame = self.layer.bounds
     }
 }
 

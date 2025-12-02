@@ -1,5 +1,6 @@
 import Foundation
 import FirebaseFirestore
+import Combine
 
 @MainActor
 class AuditListViewModel: ObservableObject {
@@ -40,7 +41,25 @@ class AuditListViewModel: ObservableObject {
                 }
                 
                 let audits = snapshot?.documents.compactMap { document in
-                    try? document.data(as: Audit.self)
+                    do {
+                        let data = document.data()
+                        
+                        let audit = Audit(
+                            id: document.documentID,
+                            cleaningRunId: data["cleaningRunId"] as? String ?? "",
+                            auditorName: data["auditorName"] as? String ?? "",
+                            auditDate: (data["createdAt"] as? Timestamp)?.dateValue() ?? Date(),
+                            score: data["complianceScore"] as? Double ?? 0.0,
+                            status: AuditStatus(rawValue: (data["status"] as? String) ?? "pending") ?? .pending,
+                            findings: data["findings"] as? [String] ?? [],
+                            recommendations: data["recommendations"] as? [String] ?? [],
+                            createdAt: (data["createdAt"] as? Timestamp)?.dateValue() ?? Date()
+                        )
+                        return audit
+                    } catch {
+                        print("Error decoding audit: \(error)")
+                        return nil
+                    }
                 } ?? []
                 
                 self.audits = audits
@@ -63,13 +82,13 @@ class AuditListViewModel: ObservableObject {
         
         switch dateFilter {
         case .today:
-            filtered = filtered.filter { calendar.isDate($0.createdAt, inSameDayAs: now) }
+            filtered = filtered.filter { calendar.isDate($0.auditDate, inSameDayAs: now) }
         case .week:
             let weekAgo = calendar.date(byAdding: .day, value: -7, to: now) ?? now
-            filtered = filtered.filter { $0.createdAt >= weekAgo }
+            filtered = filtered.filter { $0.auditDate >= weekAgo }
         case .month:
             let monthAgo = calendar.date(byAdding: .day, value: -30, to: now) ?? now
-            filtered = filtered.filter { $0.createdAt >= monthAgo }
+            filtered = filtered.filter { $0.auditDate >= monthAgo }
         case .all:
             break
         }
@@ -79,16 +98,16 @@ class AuditListViewModel: ObservableObject {
             filtered = filtered.filter { $0.auditorName == userFilter }
         }
         
-        // Apply room filter
+        // Apply room filter (using cleaningRunId as proxy)
         if !roomFilter.isEmpty {
-            filtered = filtered.filter { $0.roomName == roomFilter }
+            filtered = filtered.filter { $0.cleaningRunId.contains(roomFilter) }
         }
         
         // Apply search text
         if !searchText.isEmpty {
             filtered = filtered.filter { audit in
                 audit.auditorName.localizedCaseInsensitiveContains(searchText) ||
-                audit.roomName.localizedCaseInsensitiveContains(searchText) ||
+                audit.cleaningRunId.localizedCaseInsensitiveContains(searchText) ||
                 audit.id.localizedCaseInsensitiveContains(searchText)
             }
         }
@@ -120,20 +139,19 @@ class AuditListViewModel: ObservableObject {
         dateFormatter.dateStyle = .short
         dateFormatter.timeStyle = .short
         
-        var csv = "ID,Auditor,Room,Compliance Score,Status,Created At,Has Exceptions\n"
+        var csv = "ID,Auditor,Cleaning Run ID,Score,Status,Audit Date,Created At\n"
         
         for audit in filteredAudits {
             let escapedAuditor = "\"\(audit.auditorName.replacingOccurrences(of: "\"", with: "\"\""))\""
-            let escapedRoom = "\"\(audit.roomName.replacingOccurrences(of: "\"", with: "\"\""))\""
             
             let row = [
                 audit.id,
                 escapedAuditor,
-                escapedRoom,
-                String(audit.complianceScore),
+                audit.cleaningRunId,
+                String(audit.score),
                 audit.status.rawValue,
-                dateFormatter.string(from: audit.createdAt),
-                audit.hasExceptions ? "Yes" : "No"
+                dateFormatter.string(from: audit.auditDate),
+                dateFormatter.string(from: audit.createdAt)
             ].joined(separator: ",")
             
             csv += row + "\n"
@@ -143,41 +161,17 @@ class AuditListViewModel: ObservableObject {
     }
 }
 
-// MARK: - Audit Model
-struct Audit: Codable, Identifiable {
-    let id: String
-    let auditorId: String
-    let auditorName: String
-    let roomId: String
-    let roomName: String
-    let cleaningRunId: String
-    let complianceScore: Double
-    let status: AuditStatus
-    let hasExceptions: Bool
-    let exceptionCount: Int
-    let createdAt: Date
-    
-    enum AuditStatus: String, Codable, CaseIterable {
-        case pending = "pending"
-        case inProgress = "in_progress"
-        case completed = "completed"
-        case failed = "failed"
-    }
-}
-
 extension Audit {
     static var mock: Audit {
         Audit(
             id: "audit-1",
-            auditorId: "user-1",
-            auditorName: "Dr. Sarah Johnson",
-            roomId: "room-1",
-            roomName: "Operating Room 1",
             cleaningRunId: "run-1",
-            complianceScore: 95.0,
+            auditorName: "Dr. Sarah Johnson",
+            auditDate: Date().addingTimeInterval(-3600),
+            score: 95.0,
             status: .completed,
-            hasExceptions: false,
-            exceptionCount: 0,
+            findings: ["All areas properly cleaned", "No contamination found"],
+            recommendations: ["Continue current cleaning protocol", "Schedule next audit in 2 weeks"],
             createdAt: Date().addingTimeInterval(-3600)
         )
     }

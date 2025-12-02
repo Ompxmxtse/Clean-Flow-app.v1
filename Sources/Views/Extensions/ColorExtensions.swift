@@ -37,7 +37,7 @@ extension LinearGradient {
     static let neonGlow = LinearGradient(
         gradient: Gradient(colors: [.neonAqua.opacity(0.8), .neonAqua.opacity(0.3)]),
         startPoint: .center,
-        endPoint: .edges
+        endPoint: UnitPoint(x: 0.5, y: 1.0)
     )
     
     static let glassEffect = LinearGradient(

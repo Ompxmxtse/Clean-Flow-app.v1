@@ -1,5 +1,6 @@
 import Foundation
 import FirebaseFirestore
+import Combine
 
 @MainActor
 class StaffListViewModel: ObservableObject {
@@ -16,18 +17,24 @@ class StaffListViewModel: ObservableObject {
     
     private let db = Firestore.firestore()
     private var listenerRegistration: ListenerRegistration?
+    private var loadTask: Task<Void, Never>?
     
     deinit {
+        loadTask?.cancel()
         listenerRegistration?.remove()
     }
     
     func loadStaff() {
+        loadTask?.cancel()
         isLoading = true
         errorMessage = nil
         
-        listenerRegistration = db.collection("users")
-            .order(by: "name")
-            .addSnapshotListener { [weak self] snapshot, error in
+        loadTask = Task { [weak self] in
+            guard let self = self else { return }
+            
+            self.listenerRegistration = db.collection("users")
+                .order(by: "name")
+                .addSnapshotListener { [weak self] snapshot, error in
                 guard let self = self else { return }
                 
                 if let error = error {

@@ -1,5 +1,7 @@
 import Foundation
 import FirebaseFirestore
+import Combine
+import SwiftUI
 
 @MainActor
 class StaffDetailViewModel: ObservableObject {
@@ -11,6 +13,11 @@ class StaffDetailViewModel: ObservableObject {
     
     private let user: User
     private let db = Firestore.firestore()
+    private var task: Task<Void, Never>?
+    
+    deinit {
+        task?.cancel()
+    }
     
     init(user: User) {
         self.user = user
@@ -134,157 +141,5 @@ struct UserActivity: Identifiable {
         case .protocolStarted, .login: return Color(red: 43/255, green: 203/255, blue: 255/255)
         case .auditFailed: return Color(red: 255/255, green: 100/255, blue: 100/255)
         }
-    }
-}
-
-struct AddStaffView: View {
-    @Environment(\.dismiss) var dismiss
-    
-    var body: some View {
-        NavigationView {
-            ZStack {
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color(red: 6/255, green: 10/255, blue: 25/255),
-                        Color.black
-                    ]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .ignoresSafeArea()
-                
-                VStack(spacing: 20) {
-                    Text("Add New Staff")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .padding(.top, 40)
-                    
-                    Text("Form to add new staff member")
-                        .foregroundColor(Color.white.opacity(0.6))
-                    
-                    Spacer()
-                    
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                    .foregroundColor(Color(red: 43/255, green: 203/255, blue: 255/255))
-                    .padding(.bottom, 20)
-                }
-            }
-            .navigationTitle("Add Staff")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                    .foregroundColor(Color(red: 43/255, green: 203/255, blue: 255/255))
-                }
-            }
-        }
-        .navigationViewStyle(StackNavigationViewStyle())
-    }
-}
-
-struct EditStaffView: View {
-    let user: User
-    @Environment(\.dismiss) var dismiss
-    
-    var body: some View {
-        NavigationView {
-            ZStack {
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color(red: 6/255, green: 10/255, blue: 25/255),
-                        Color.black
-                    ]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .ignoresSafeArea()
-                
-                VStack(spacing: 20) {
-                    Text("Edit Staff Profile")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .padding(.top, 40)
-                    
-                    Text("Form to edit staff member")
-                        .foregroundColor(Color.white.opacity(0.6))
-                    
-                    Spacer()
-                    
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                    .foregroundColor(Color(red: 43/255, green: 203/255, blue: 255/255))
-                    .padding(.bottom, 20)
-                }
-            }
-            .navigationTitle("Edit Staff")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                    .foregroundColor(Color(red: 43/255, green: 203/255, blue: 255/255))
-                }
-            }
-        }
-        .navigationViewStyle(StackNavigationViewStyle())
-    }
-}
-
-struct ActivityHistoryView: View {
-    let user: User
-    @Environment(\.dismiss) var dismiss
-    
-    var body: some View {
-        NavigationView {
-            ZStack {
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color(red: 6/255, green: 10/255, blue: 25/255),
-                        Color.black
-                    ]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .ignoresSafeArea()
-                
-                VStack(spacing: 20) {
-                    Text("Activity History")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .padding(.top, 40)
-                    
-                    Text("Detailed activity history for \(user.name)")
-                        .foregroundColor(Color.white.opacity(0.6))
-                    
-                    Spacer()
-                    
-                    Button("Close") {
-                        dismiss()
-                    }
-                    .foregroundColor(Color(red: 43/255, green: 203/255, blue: 255/255))
-                    .padding(.bottom, 20)
-                }
-            }
-            .navigationTitle("Activity History")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Close") {
-                        dismiss()
-                    }
-                    .foregroundColor(Color(red: 43/255, green: 203/255, blue: 255/255))
-                }
-            }
-        }
-        .navigationViewStyle(StackNavigationViewStyle())
     }
 }

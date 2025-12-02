@@ -63,7 +63,7 @@ struct CleaningRunWorkflow: View {
                     
                 case .review:
                     ReviewPhaseView(
-                        protocol: selectedProtocol!,
+                        cleaningProtocol: selectedProtocol!,
                         scanResult: scanResult!,
                         completedSteps: completedSteps,
                         stepNotes: stepNotes
@@ -433,51 +433,50 @@ struct ActiveProtocolPhaseView: View {
                 // Action Buttons
                 HStack(spacing: 16) {
                     if !isCompleted {
-                            Button(action: {
-                                completeStep(currentStep)
-                            }) {
-                                HStack {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .font(.title2)
-                                    
-                                    Text("Complete Step")
-                                        .fontWeight(.semibold)
-                                }
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [.successGreen, .successGreen.opacity(0.8)]),
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
-                                .foregroundColor(.white)
-                                .cornerRadius(12)
-                                .shadow(color: .successGreen.opacity(0.3), radius: 8)
-                            }
-                        }
-                        
                         Button(action: {
-                            showingStepNotes = true
+                            completeStep(currentStep)
                         }) {
                             HStack {
-                                Image(systemName: "note.text")
+                                Image(systemName: "checkmark.circle.fill")
                                     .font(.title2)
                                 
-                                Text("Add Note")
+                                Text("Complete Step")
                                     .fontWeight(.semibold)
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.glassBackground)
-                            .foregroundColor(.primaryText)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.glassBorder, lineWidth: 1)
+                            .background(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.successGreen, .successGreen.opacity(0.8)]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
                             )
+                            .foregroundColor(.white)
                             .cornerRadius(12)
+                            .shadow(color: .successGreen.opacity(0.3), radius: 8)
                         }
+                    }
+                    
+                    Button(action: {
+                        showingStepNotes = true
+                    }) {
+                        HStack {
+                            Image(systemName: "note.text")
+                                .font(.title2)
+                            
+                            Text("Add Note")
+                                .fontWeight(.semibold)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.glassBackground)
+                        .foregroundColor(.primaryText)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.glassBorder, lineWidth: 1)
+                        )
+                        .cornerRadius(12)
                     }
                 }
                 .padding()
