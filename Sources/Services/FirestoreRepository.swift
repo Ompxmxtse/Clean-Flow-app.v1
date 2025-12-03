@@ -125,7 +125,7 @@ class FirestoreRepository {
             }
         }
     }
-    
+
     func saveProtocol(_ cleaningProtocol: CleaningProtocol, completion: @escaping (Result<Void, Error>) -> Void) {
         let stepsData = cleaningProtocol.steps.map { step in
             return [
@@ -257,9 +257,8 @@ class FirestoreRepository {
                 
                 completion(.success(runs))
             }
-        }
     }
-    
+
     // MARK: - Real-time Listener
     func listenToCleaningRuns(for userId: String? = nil, completion: @escaping (Result<[CleaningRun], Error>) -> Void) -> ListenerRegistration {
         var query: Query = db.collection("runs")

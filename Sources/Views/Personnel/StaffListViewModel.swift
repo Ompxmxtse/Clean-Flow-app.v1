@@ -52,8 +52,9 @@ class StaffListViewModel: ObservableObject {
                 self.calculateStats()
                 self.isLoading = false
             }
+        }
     }
-    
+
     func applyFilters(role: User.UserRole?, searchText: String) {
         var filtered = staff
         
