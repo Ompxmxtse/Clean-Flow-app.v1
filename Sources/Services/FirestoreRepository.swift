@@ -260,6 +260,92 @@ class FirestoreRepository {
         }
     }
     
+    // MARK: - Convenience Methods (for AppState compatibility)
+    func fetchProtocols(completion: @escaping (Result<[CleaningProtocol], Error>) -> Void) {
+        getProtocols(completion: completion)
+    }
+
+    func fetchCleaningRunsToday(completion: @escaping (Result<[CleaningRun], Error>) -> Void) {
+        let today = Calendar.current.startOfDay(for: Date())
+        guard let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today) else {
+            completion(.failure(NSError(domain: "FirestoreError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to calculate date range"])))
+            return
+        }
+
+        db.collection("cleaningRuns")
+            .whereField("startTime", isGreaterThanOrEqualTo: today)
+            .whereField("startTime", isLessThan: tomorrow)
+            .order(by: "startTime", descending: true)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+
+                var runs: [CleaningRun] = []
+
+                snapshot?.documents.forEach { document in
+                    let data = document.data()
+                    let steps = (data["steps"] as? [[String: Any]] ?? []).compactMap { stepData -> CompletedStep? in
+                        guard let id = stepData["id"] as? String,
+                              let stepId = stepData["stepId"] as? String,
+                              let name = stepData["name"] as? String else {
+                            return nil
+                        }
+                        let checklistItems = (stepData["checklistItems"] as? [[String: Any]] ?? []).compactMap { itemData -> CompletedChecklistItem? in
+                            guard let id = itemData["id"] as? String,
+                                  let itemDict = itemData["item"] as? [String: Any],
+                                  let text = itemDict["text"] as? String else {
+                                return nil
+                            }
+                            return CompletedChecklistItem(
+                                id: id,
+                                item: ChecklistItem(id: UUID().uuidString, text: text, isRequired: itemDict["isRequired"] as? Bool ?? false),
+                                completed: itemData["completed"] as? Bool ?? false,
+                                completedAt: (itemData["completedAt"] as? Timestamp)?.dateValue()
+                            )
+                        }
+
+                        return CompletedStep(
+                            id: id,
+                            stepId: stepId,
+                            name: name,
+                            completed: stepData["completed"] as? Bool ?? false,
+                            completedAt: (stepData["completedAt"] as? Timestamp)?.dateValue(),
+                            completedBy: stepData["completedBy"] as? String,
+                            notes: stepData["notes"] as? String,
+                            checklistItems: checklistItems
+                        )
+                    }
+
+                    let run = CleaningRun(
+                        id: document.documentID,
+                        protocolId: data["protocolId"] as? String ?? "",
+                        protocolName: data["protocolName"] as? String ?? "",
+                        cleanerId: data["cleanerId"] as? String ?? "",
+                        cleanerName: data["cleanerName"] as? String ?? "",
+                        areaId: data["areaId"] as? String ?? "",
+                        areaName: data["areaName"] as? String ?? "",
+                        startTime: (data["startTime"] as? Timestamp)?.dateValue() ?? Date(),
+                        endTime: (data["endTime"] as? Timestamp)?.dateValue(),
+                        status: CleaningStatus(rawValue: data["status"] as? String ?? "") ?? .pending,
+                        verificationMethod: VerificationMethod(rawValue: data["verificationMethod"] as? String ?? "") ?? .manual,
+                        qrCode: data["qrCode"] as? String,
+                        nfcTag: data["nfcTag"] as? String,
+                        steps: steps,
+                        notes: data["notes"] as? String,
+                        auditorId: data["auditorId"] as? String,
+                        auditorName: data["auditorName"] as? String,
+                        complianceScore: data["complianceScore"] as? Double,
+                        createdAt: (data["createdAt"] as? Timestamp)?.dateValue() ?? Date()
+                    )
+                    runs.append(run)
+                }
+
+                completion(.success(runs))
+            }
+    }
+
     // MARK: - Real-time Listener
     func listenToCleaningRuns(for userId: String? = nil, completion: @escaping (Result<[CleaningRun], Error>) -> Void) -> ListenerRegistration {
         var query: Query = db.collection("runs")

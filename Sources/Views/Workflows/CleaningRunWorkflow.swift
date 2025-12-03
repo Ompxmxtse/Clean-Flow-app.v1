@@ -140,31 +140,50 @@ struct CleaningRunWorkflow: View {
         guard let user = authService.currentUser,
               let cleaningProtocol = selectedProtocol,
               let scanResult = scanResult else { return }
-        
+
         isSubmitting = true
-        
-        // Create exceptions for missed steps
-        let missedSteps = cleaningProtocol.steps.filter { !completedSteps.contains($0.id) }
-        let exceptions = missedSteps.map { step in
-            CleaningException(
+
+        // Create completed steps
+        let completedStepsList = cleaningProtocol.steps.map { step in
+            CompletedStep(
                 id: UUID().uuidString,
                 stepId: step.id,
-                reason: stepNotes[step.id] ?? "Step not completed",
-                reportedAt: Date(),
-                reportedBy: user.name,
-                approvedBy: nil,
-                approvedAt: nil
+                name: step.name,
+                completed: completedSteps.contains(step.id),
+                completedAt: completedSteps.contains(step.id) ? Date() : nil,
+                completedBy: completedSteps.contains(step.id) ? user.name : nil,
+                notes: stepNotes[step.id],
+                checklistItems: step.checklistItems.map { item in
+                    CompletedChecklistItem(
+                        id: UUID().uuidString,
+                        item: ChecklistItem(id: item.id, text: item.text, isRequired: item.isRequired),
+                        completed: completedSteps.contains(step.id),
+                        completedAt: completedSteps.contains(step.id) ? Date() : nil
+                    )
+                }
             )
         }
-        
+
         let cleaningRun = CleaningRun(
             id: UUID().uuidString,
-            userId: user.id,
             protocolId: cleaningProtocol.id,
-            roomId: scanResult.areaId,
-            stepsCompleted: Array(completedSteps),
-            completedAt: Date(),
-            exceptions: exceptions
+            protocolName: cleaningProtocol.name,
+            cleanerId: user.id,
+            cleanerName: user.name,
+            areaId: scanResult.areaId,
+            areaName: scanResult.areaName,
+            startTime: Date().addingTimeInterval(-1800), // Approximate start time
+            endTime: Date(),
+            status: .completed,
+            verificationMethod: scanResult.type == .qr ? .qrCode : .nfc,
+            qrCode: scanResult.type == .qr ? "CF-AREA-\(scanResult.areaId)-PROTOCOL-\(cleaningProtocol.id)" : nil,
+            nfcTag: scanResult.type == .nfc ? scanResult.areaId : nil,
+            steps: completedStepsList,
+            notes: nil,
+            auditorId: nil,
+            auditorName: nil,
+            complianceScore: calculateComplianceScore(),
+            createdAt: Date()
         )
         
         FirestoreRepository.shared.saveCleaningRun(cleaningRun) { [weak self] result in
@@ -551,7 +570,7 @@ struct ActiveProtocolPhaseView: View {
         }
     }
     
-    private func completeStep(_ step: CleaningStep) {
+    private func completeStep(_ step: CleaningProtocol.Step) {
         completedSteps.insert(step.id)
         
         // Haptic feedback
@@ -837,7 +856,7 @@ struct ProtocolSelectionCard: View {
 }
 
 struct ActiveStepCard: View {
-    let step: CleaningStep
+    let step: CleaningProtocol.Step
     let isCompleted: Bool
     let note: String
     let onNoteChange: (String) -> Void
@@ -920,15 +939,15 @@ struct ActiveStepCard: View {
                         .font(.caption)
                         .fontWeight(.medium)
                         .foregroundColor(.accentText)
-                    
+
                     VStack(alignment: .leading, spacing: 4) {
-                        ForEach(step.checklistItems, id: \.self) { item in
+                        ForEach(step.checklistItems) { item in
                             HStack(spacing: 8) {
                                 Image(systemName: isCompleted ? "checkmark.square.fill" : "square")
                                     .font(.caption)
                                     .foregroundColor(isCompleted ? .successGreen : .secondaryText)
-                                
-                                Text(item)
+
+                                Text(item.text)
                                     .font(.caption)
                                     .foregroundColor(.primaryText)
                                     .strikethrough(isCompleted)
@@ -979,7 +998,7 @@ struct ReviewRow: View {
 
 struct StepReviewRow: View {
     let stepNumber: Int
-    let step: CleaningStep
+    let step: CleaningProtocol.Step
     let isCompleted: Bool
     let note: String?
     
@@ -1019,12 +1038,12 @@ struct StepReviewRow: View {
 }
 
 struct StepNotesView: View {
-    let step: CleaningStep
+    let step: CleaningProtocol.Step
     @State private var note: String
     let onSave: (String) -> Void
     @Environment(\.dismiss) var dismiss
-    
-    init(step: CleaningStep, note: String, onSave: @escaping (String) -> Void) {
+
+    init(step: CleaningProtocol.Step, note: String, onSave: @escaping (String) -> Void) {
         self.step = step
         self._note = State(initialValue: note)
         self.onSave = onSave

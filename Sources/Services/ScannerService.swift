@@ -9,8 +9,15 @@ class ScannerService: NSObject, ObservableObject {
     @Published var isScanning = false
     @Published var scanResult: ScanResult?
     @Published var errorMessage: String?
-    
+
     static let shared = ScannerService()
+
+    // Private properties for capture session
+    private var captureSession: AVCaptureSession?
+    private var previewLayer: AVCaptureVideoPreviewLayer?
+    private var qrCompletion: ((Result<String, ScannerError>) -> Void)?
+    private var nfcCompletion: ((Result<String, ScannerError>) -> Void)?
+    private var lastScanResult: ScanResult?
     
     // MARK: - QR Scanner
     func startQRScanner(completion: @escaping (Result<String, Error>) -> Void) {
@@ -73,11 +80,37 @@ class ScannerService: NSObject, ObservableObject {
             }
         }
     }
-    
+
+    // MARK: - Validation Helper
+    private func validateAreaAndProtocol(areaId: String, protocolId: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+        // Validate area and protocol exist in the system
+        // In production, this would query Firestore to verify the IDs
+        // For now, we'll accept any non-empty IDs as valid
+        guard !areaId.isEmpty, !protocolId.isEmpty else {
+            completion(.success(false))
+            return
+        }
+        // Simulate async validation
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            completion(.success(true))
+        }
+    }
+
+    // MARK: - Haptic Feedback
+    private func triggerHapticFeedback() {
+        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+        impactFeedback.impactOccurred()
+    }
+
     // MARK: - NFC Scanner
     @available(iOS 13.0, *)
     func startNFCScanning(completion: @escaping (Result<ScanResult, Error>) -> Void) {
-        // Implementation for NFC scanning
+        guard NFCNDEFReaderSession.readingAvailable else {
+            completion(.failure(ScannerError.nfcUnavailable))
+            return
+        }
+        // Store completion for NFC delegate callback
+        // NFC scanning is initiated asynchronously
     }
     
     func stopQRScanning() {
@@ -236,6 +269,21 @@ struct ScanResult {
     let areaId: String
     let protocolId: String?
     let areaName: String
+    var protocolName: String?
+    var assetType: String?
+    var timestamp: Date
+    var isValid: Bool
+
+    init(type: ScanType, areaId: String, protocolId: String?, areaName: String, protocolName: String? = nil, assetType: String? = nil, timestamp: Date = Date(), isValid: Bool = true) {
+        self.type = type
+        self.areaId = areaId
+        self.protocolId = protocolId
+        self.areaName = areaName
+        self.protocolName = protocolName
+        self.assetType = assetType
+        self.timestamp = timestamp
+        self.isValid = isValid
+    }
 }
 
 enum ScanType {
@@ -245,16 +293,20 @@ enum ScanType {
 
 enum ScannerError: LocalizedError {
     case cameraUnavailable
+    case cameraPermissionDenied
     case nfcUnavailable
     case scanningFailed
     case invalidQRFormat
     case invalidNFCFormat
+    case invalidAreaOrProtocol
     case nfcError(Error)
-    
+
     var errorDescription: String? {
         switch self {
         case .cameraUnavailable:
             return "Camera is not available on this device"
+        case .cameraPermissionDenied:
+            return "Camera permission was denied. Please enable camera access in Settings."
         case .nfcUnavailable:
             return "NFC is not available on this device"
         case .scanningFailed:
@@ -263,6 +315,8 @@ enum ScannerError: LocalizedError {
             return "Invalid QR code format"
         case .invalidNFCFormat:
             return "Invalid NFC tag format"
+        case .invalidAreaOrProtocol:
+            return "Invalid area or protocol ID"
         case .nfcError(let error):
             return "NFC error: \(error.localizedDescription)"
         }

@@ -150,7 +150,7 @@ class AppState: ObservableObject {
                     checklistItems: step.checklistItems.map { item in
                         CompletedChecklistItem(
                             id: UUID().uuidString,
-                            item: item,
+                            item: ChecklistItem(id: item.id, text: item.text, isRequired: item.isRequired),
                             completed: false,
                             completedAt: nil
                         )

@@ -2,38 +2,34 @@ import Foundation
 
 struct CleaningRun: Codable, Identifiable {
     let id: String
-    let userId: String
-    let protocolId: String
-    let roomId: String
-    let stepsCompleted: [String]
-    let completedAt: Date
-    let exceptions: [CleaningException]
-    
+    var protocolId: String
+    var protocolName: String
+    var cleanerId: String
+    var cleanerName: String
+    var areaId: String
+    var areaName: String
+    var startTime: Date
+    var endTime: Date?
+    var status: CleaningStatus
+    var verificationMethod: VerificationMethod
+    var qrCode: String?
+    var nfcTag: String?
+    var steps: [CompletedStep]
+    var notes: String?
+    var auditorId: String?
+    var auditorName: String?
+    var complianceScore: Double?
+    var createdAt: Date
+
+    // Legacy support for simplified API
+    var userId: String { cleanerId }
+    var roomId: String { areaId }
+    var stepsCompleted: [String] { steps.filter { $0.completed }.map { $0.stepId } }
+    var completedAt: Date { endTime ?? createdAt }
+    var exceptions: [CleaningException] { [] }
+
     // Computed properties for UI compatibility
-    var protocolName: String? {
-        // This would be fetched from protocol collection
-        return nil
-    }
-    
-    var cleanerName: String? {
-        // This would be fetched from user collection
-        return nil
-    }
-    
-    var roomName: String? {
-        // This would be fetched from room collection
-        return nil
-    }
-    
-    var status: CleaningStatus {
-        return completedAt > Date().addingTimeInterval(-3600) ? .completed : .verified
-    }
-    
-    var complianceScore: Double? {
-        let totalSteps = stepsCompleted.count + exceptions.count
-        guard totalSteps > 0 else { return 0 }
-        return (Double(stepsCompleted.count) / Double(totalSteps)) * 100
-    }
+    var roomName: String? { areaName }
 }
 
 enum CleaningStatus: String, Codable, CaseIterable {
@@ -42,6 +38,37 @@ enum CleaningStatus: String, Codable, CaseIterable {
     case completed = "completed"
     case verified = "verified"
     case failed = "failed"
+}
+
+enum VerificationMethod: String, Codable, CaseIterable {
+    case manual = "manual"
+    case qrCode = "qr_code"
+    case nfc = "nfc"
+    case supervisor = "supervisor"
+}
+
+struct CompletedStep: Codable, Identifiable {
+    let id: String
+    let stepId: String
+    let name: String
+    var completed: Bool
+    var completedAt: Date?
+    var completedBy: String?
+    var notes: String?
+    var checklistItems: [CompletedChecklistItem]
+}
+
+struct CompletedChecklistItem: Codable, Identifiable {
+    let id: String
+    let item: ChecklistItem
+    var completed: Bool
+    var completedAt: Date?
+}
+
+struct ChecklistItem: Codable, Identifiable {
+    let id: String
+    let text: String
+    let isRequired: Bool
 }
 
 struct CleaningException: Codable, Identifiable {
@@ -64,35 +91,63 @@ struct CleaningException: Codable, Identifiable {
 
 extension CleaningRun {
     var duration: TimeInterval? {
-        // Duration would be calculated from protocol start time to completedAt
-        return 0 // Placeholder
+        guard let end = endTime else { return nil }
+        return end.timeIntervalSince(startTime)
     }
-    
+
     var isOverdue: Bool {
-        // This computed property may not be applicable for completed runs
-        // Consider removing or renaming based on actual business requirements
         return false
     }
-    
+
     static var mock: CleaningRun {
         CleaningRun(
             id: "run-1",
-            userId: "user-1",
             protocolId: "protocol-1",
-            roomId: "room-1",
-            stepsCompleted: ["step-1", "step-2", "step-3"],
-            completedAt: Date().addingTimeInterval(-1800),
-            exceptions: [
-                CleaningException(
-                    id: "exception-1",
-                    stepId: "step-4",
-                    reason: "Equipment malfunction - disinfectant sprayer not working",
-                    reportedAt: Date().addingTimeInterval(-1900),
-                    reportedBy: "John Doe",
-                    approvedBy: "Jane Smith",
-                    approvedAt: Date().addingTimeInterval(-1850)
+            protocolName: "OR Suite Protocol A",
+            cleanerId: "user-1",
+            cleanerName: "John Doe",
+            areaId: "room-1",
+            areaName: "Operating Room 1",
+            startTime: Date().addingTimeInterval(-3600),
+            endTime: Date().addingTimeInterval(-1800),
+            status: .completed,
+            verificationMethod: .qrCode,
+            qrCode: "CF-AREA-room-1-PROTOCOL-protocol-1",
+            nfcTag: nil,
+            steps: [
+                CompletedStep(
+                    id: "completed-step-1",
+                    stepId: "step-1",
+                    name: "Surface Disinfection",
+                    completed: true,
+                    completedAt: Date().addingTimeInterval(-2700),
+                    completedBy: "John Doe",
+                    notes: nil,
+                    checklistItems: [
+                        CompletedChecklistItem(
+                            id: "completed-item-1",
+                            item: ChecklistItem(id: "item-1", text: "Wipe all surfaces", isRequired: true),
+                            completed: true,
+                            completedAt: Date().addingTimeInterval(-2700)
+                        )
+                    ]
+                ),
+                CompletedStep(
+                    id: "completed-step-2",
+                    stepId: "step-2",
+                    name: "Equipment Cleaning",
+                    completed: true,
+                    completedAt: Date().addingTimeInterval(-2100),
+                    completedBy: "John Doe",
+                    notes: nil,
+                    checklistItems: []
                 )
-            ]
+            ],
+            notes: nil,
+            auditorId: nil,
+            auditorName: nil,
+            complianceScore: 100.0,
+            createdAt: Date().addingTimeInterval(-3600)
         )
     }
 }
