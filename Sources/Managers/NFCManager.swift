@@ -20,8 +20,8 @@ class NFCManager: NSObject, ObservableObject, NFCNDEFReaderSessionDelegate {
         }
         
         let session = NFCNDEFReaderSession(delegate: self, queue: nil, invalidateAfterFirstRead: true)
-        session?.alertMessage = "Hold your iPhone near the NFC tag to read it"
-        session?.begin()
+        session.alertMessage = "Hold your iPhone near the NFC tag to read it"
+        session.begin()
         
         isScanning = true
     }
