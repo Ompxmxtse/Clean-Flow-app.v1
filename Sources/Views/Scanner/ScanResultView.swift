@@ -175,7 +175,7 @@ struct ScanResultView: View {
     }
 }
 
-struct DetailRow: View {
+fileprivate struct DetailRow: View {
     let title: String
     let value: String
     let icon: String
