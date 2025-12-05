@@ -258,8 +258,8 @@ struct ProtocolCard: View {
                         Image(systemName: "building.2")
                             .font(.caption)
                             .foregroundColor(Color(red: 43/255, green: 203/255, blue: 255/255))
-                        
-                        Text(cleaningProtocol.areaType.rawValue.replacingOccurrences(of: "_", with: " ").capitalized)
+
+                        Text((cleaningProtocol.areaType?.rawValue ?? "general").replacingOccurrences(of: "_", with: " ").capitalized)
                             .font(.caption)
                             .foregroundColor(.white)
                     }
@@ -295,18 +295,25 @@ struct ProtocolCard: View {
     }
     
     private var priorityBadge: some View {
-        Text(cleaningProtocol.priority.rawValue.capitalized)
-            .font(.caption2)
-            .fontWeight(.medium)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(priorityColor.opacity(0.2))
-            .foregroundColor(priorityColor)
-            .clipShape(Capsule())
+        Group {
+            if let priority = cleaningProtocol.priority {
+                Text(priority.rawValue.capitalized)
+                    .font(.caption2)
+                    .fontWeight(.medium)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(priorityColor.opacity(0.2))
+                    .foregroundColor(priorityColor)
+                    .clipShape(Capsule())
+            } else {
+                EmptyView()
+            }
+        }
     }
-    
+
     private var priorityColor: Color {
-        switch cleaningProtocol.priority {
+        guard let priority = cleaningProtocol.priority else { return Color.white.opacity(0.6) }
+        switch priority {
         case .critical: return Color(red: 255/255, green: 100/255, blue: 100/255)
         case .high: return Color(red: 255/255, green: 200/255, blue: 100/255)
         case .medium: return Color(red: 43/255, green: 203/255, blue: 255/255)

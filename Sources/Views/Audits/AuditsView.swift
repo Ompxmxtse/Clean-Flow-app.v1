@@ -354,6 +354,15 @@ struct UpcomingAuditRow: View {
 }
 
 // MARK: - Data Models
+
+// Top-level AuditStatus for broader access
+enum AuditStatus: String, CaseIterable {
+    case pending = "pending"
+    case inProgress = "in_progress"
+    case completed = "completed"
+    case failed = "failed"
+}
+
 struct Audit: Identifiable {
     let id: String
     let cleaningRunId: String
@@ -364,12 +373,23 @@ struct Audit: Identifiable {
     let findings: [String]
     let recommendations: [String]
     let createdAt: Date
-    
-    enum AuditStatus: String, CaseIterable {
-        case pending = "pending"
-        case inProgress = "in_progress"
-        case completed = "completed"
-        case failed = "failed"
+    let roomName: String  // Added for AuditListViewModel.uniqueRooms
+
+    // Alias for views that use complianceScore
+    var complianceScore: Double { score }
+
+    // Convenience initializer with roomName default
+    init(id: String, cleaningRunId: String, auditorName: String, auditDate: Date, score: Double, status: AuditStatus, findings: [String], recommendations: [String], createdAt: Date, roomName: String = "") {
+        self.id = id
+        self.cleaningRunId = cleaningRunId
+        self.auditorName = auditorName
+        self.auditDate = auditDate
+        self.score = score
+        self.status = status
+        self.findings = findings
+        self.recommendations = recommendations
+        self.createdAt = createdAt
+        self.roomName = roomName
     }
 }
 

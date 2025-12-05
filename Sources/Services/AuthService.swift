@@ -30,7 +30,7 @@ class AuthService: ObservableObject {
     private func fetchUserData(uid: String) {
         isLoading = true
         
-        FirestoreRepository.shared.fetchUser(uid: uid) { [weak self] result in
+        FirestoreRepository.shared.fetchUser(id: uid) { [weak self] result in
             DispatchQueue.main.async {
                 self?.isLoading = false
                 

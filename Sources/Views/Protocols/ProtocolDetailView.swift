@@ -109,7 +109,7 @@ struct ProtocolDetailView: View {
                 InfoRow(
                     icon: "calendar",
                     title: "Last Updated",
-                    value: formatDate(cleaningProtocol.updatedAt)
+                    value: formatDate(cleaningProtocol.updatedAt ?? cleaningProtocol.createdAt)
                 )
             }
         }
@@ -209,19 +209,43 @@ struct ProtocolDetailView: View {
             .clipShape(Capsule())
     }
     
-    private var areaTypeBadge: some View {
-        Text(cleaningProtocol.areaType.rawValue.replacingOccurrences(of: "_", with: " ").capitalized)
-            .font(.caption)
-            .fontWeight(.medium)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(Color.neonAqua.opacity(0.2))
-            .foregroundColor(.neonAqua)
-            .clipShape(Capsule())
+    private var priorityBadge: some View {
+        Group {
+            if let priority = cleaningProtocol.priority {
+                Text(priority.rawValue.capitalized)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(priorityColor.opacity(0.2))
+                    .foregroundColor(priorityColor)
+                    .clipShape(Capsule())
+            } else {
+                EmptyView()
+            }
+        }
     }
-    
+
+    private var areaTypeBadge: some View {
+        Group {
+            if let areaType = cleaningProtocol.areaType {
+                Text(areaType.rawValue.replacingOccurrences(of: "_", with: " ").capitalized)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.neonAqua.opacity(0.2))
+                    .foregroundColor(.neonAqua)
+                    .clipShape(Capsule())
+            } else {
+                EmptyView()
+            }
+        }
+    }
+
     private var priorityColor: Color {
-        switch cleaningProtocol.priority {
+        guard let priority = cleaningProtocol.priority else { return .secondaryText }
+        switch priority {
         case .critical: return .errorRed
         case .high: return .warningYellow
         case .medium: return .neonAqua

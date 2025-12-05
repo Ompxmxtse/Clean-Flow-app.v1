@@ -316,10 +316,10 @@ struct AuditTimelineCard: View {
                     // Header
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Audit #\(audit.id.suffix(6))")
+                            Text("Audit #\(String(audit.id.suffix(6)))")
                                 .font(.headline)
                                 .foregroundColor(.white)
-                            
+
                             Text(formatDate(audit.createdAt))
                                 .font(.caption)
                                 .foregroundColor(Color.white.opacity(0.6))
@@ -437,12 +437,12 @@ struct AuditTimelineCard: View {
     }
 }
 
-// MARK: - Filter Chip
-struct FilterChip: View {
+// MARK: - Filter Chip (fileprivate to avoid conflict with PersonnelView.FilterChip)
+fileprivate struct AuditFilterChip: View {
     let title: String
     let isSelected: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             Text(title)
