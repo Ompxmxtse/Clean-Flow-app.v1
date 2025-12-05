@@ -251,10 +251,10 @@ struct StepChecklistView: View {
     
     private func handleStepAction(_ action: StepAction, for step: CleaningStep) {
         switch action {
-        case .complete:
+        case .toggleComplete:
             completedSteps.insert(step.id)
-            impactFeedback.impactOccurred()
-            
+            impactFeedback(.medium)
+
         case .addNotes:
             showingNotesForStep = step
         }

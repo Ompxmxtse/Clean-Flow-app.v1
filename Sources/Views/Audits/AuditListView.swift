@@ -316,10 +316,10 @@ struct AuditTimelineCard: View {
                     // Header
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Audit #\(audit.id.suffix(6))")
+                            Text("Audit #\(String(audit.id.suffix(6)))")
                                 .font(.headline)
                                 .foregroundColor(.white)
-                            
+
                             Text(formatDate(audit.createdAt))
                                 .font(.caption)
                                 .foregroundColor(Color.white.opacity(0.6))

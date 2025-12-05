@@ -44,7 +44,7 @@ struct ProtocolsView: View {
                             
                             // Protocols Grid
                             if filteredProtocols.isEmpty {
-                                EmptyStateView()
+                                emptyStateView
                             } else {
                                 LazyVGrid(columns: [
                                     GridItem(.flexible()),
@@ -114,7 +114,7 @@ struct ProtocolsView: View {
     }
     
     // MARK: - Empty State
-    private var EmptyStateView: some View {
+    private var emptyStateView: some View {
         VStack(spacing: 20) {
             Image(systemName: "list.bullet.clipboard")
                 .font(.system(size: 60))
@@ -182,13 +182,33 @@ struct ActiveProtocolView: View {
                 // Current Step
                 if appState.currentStepIndex < run.steps.count {
                     let currentStep = run.steps[appState.currentStepIndex]
-                    
+
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Current Step")
                             .font(.headline)
                             .foregroundColor(.primaryText)
-                        
-                        StepDetailView(step: currentStep, protocolStep: getProtocolStep(for: currentStep))
+
+                        // Display the protocol step with completion status
+                        if let protocolStep = getProtocolStep(for: currentStep) {
+                            StepDetailView(
+                                step: protocolStep,
+                                isCompleted: currentStep.completed,
+                                note: currentStep.notes,
+                                onAction: { _ in }  // No action in this context
+                            )
+                        } else {
+                            // Fallback: show completed step info
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(currentStep.name)
+                                    .font(.subheadline)
+                                    .foregroundColor(.primaryText)
+                                if let notes = currentStep.notes {
+                                    Text(notes)
+                                        .font(.caption)
+                                        .foregroundColor(.secondaryText)
+                                }
+                            }
+                        }
                     }
                     .padding()
                     .glassCard()

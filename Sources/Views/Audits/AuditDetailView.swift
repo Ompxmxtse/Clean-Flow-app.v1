@@ -212,7 +212,7 @@ struct AuditDetailView: View {
                 DetailRow(
                     icon: "doc.text",
                     title: "Cleaning Run ID",
-                    value: audit.cleaningRunId.suffix(8)
+                    value: String(audit.cleaningRunId.suffix(8))
                 )
             }
         }

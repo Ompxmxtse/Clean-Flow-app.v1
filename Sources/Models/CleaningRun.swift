@@ -15,6 +15,7 @@ enum CleaningStatus: String, Codable, CaseIterable {
     case completed = "completed"
     case verified = "verified"
     case failed = "failed"
+    case audited = "audited"  // Added for DashboardView statusColor
 }
 
 // MARK: - Checklist Item

@@ -157,14 +157,40 @@ struct CleaningRunWorkflow: View {
             )
         }
         
+        // Convert completedSteps Set<String> to [CompletedStep]
+        let completedStepObjects = cleaningProtocol.steps.filter { completedSteps.contains($0.id) }.map { step in
+            CompletedStep(
+                id: UUID().uuidString,
+                stepId: step.id,
+                name: step.name,
+                completed: true,
+                completedAt: Date(),
+                completedBy: user.name,
+                notes: stepNotes[step.id],
+                checklistItems: []
+            )
+        }
+
         let cleaningRun = CleaningRun(
             id: UUID().uuidString,
-            userId: user.id,
             protocolId: cleaningProtocol.id,
-            roomId: scanResult.areaId,
-            stepsCompleted: Array(completedSteps),
-            completedAt: Date(),
-            exceptions: exceptions
+            protocolName: cleaningProtocol.name,
+            cleanerId: user.id,
+            cleanerName: user.name,
+            areaId: scanResult.areaId,
+            areaName: scanResult.areaName,
+            startTime: Date().addingTimeInterval(-Double(cleaningProtocol.steps.count * 300)),
+            endTime: Date(),
+            status: .completed,
+            verificationMethod: scanResult.type == .qr ? .qrCode : .nfc,
+            qrCode: scanResult.type == .qr ? "CF-AREA-\(scanResult.areaId)" : nil,
+            nfcTag: scanResult.type == .nfc ? "NFC-\(scanResult.areaId)" : nil,
+            steps: completedStepObjects,
+            notes: nil,
+            auditorId: nil,
+            auditorName: nil,
+            complianceScore: calculateComplianceScore(),
+            createdAt: Date()
         )
         
         FirestoreRepository.shared.saveCleaningRun(cleaningRun) { [weak self] result in
@@ -175,8 +201,8 @@ struct CleaningRunWorkflow: View {
                 case .success:
                     self?.workflowState = .completed
                     // Trigger haptic feedback
-                    let impactFeedback = UIImpactFeedbackGenerator(style: .success)
-                    impactFeedback.impactOccurred()
+                    let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+                    feedbackGenerator.impactOccurred()
                 case .failure(let error):
                     // Show error appropriately in production
                     break
@@ -816,18 +842,25 @@ struct ProtocolSelectionCard: View {
     }
     
     private var priorityBadge: some View {
-        Text(cleaningProtocol.priority.rawValue.capitalized)
-            .font(.caption2)
-            .fontWeight(.medium)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(priorityColor.opacity(0.2))
-            .foregroundColor(priorityColor)
-            .clipShape(Capsule())
+        Group {
+            if let priority = cleaningProtocol.priority {
+                Text(priority.rawValue.capitalized)
+                    .font(.caption2)
+                    .fontWeight(.medium)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(priorityColor.opacity(0.2))
+                    .foregroundColor(priorityColor)
+                    .clipShape(Capsule())
+            } else {
+                EmptyView()
+            }
+        }
     }
-    
+
     private var priorityColor: Color {
-        switch cleaningProtocol.priority {
+        guard let priority = cleaningProtocol.priority else { return .secondaryText }
+        switch priority {
         case .critical: return .errorRed
         case .high: return .warningYellow
         case .medium: return .neonAqua

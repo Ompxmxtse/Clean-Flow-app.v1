@@ -81,7 +81,7 @@ struct ScanResultView: View {
                                 
                                 ScanDetailRow(
                                     title: "Scan Time",
-                                    value: formatTime(result.timestamp),
+                                    value: formatTime(result.timestamp ?? Date()),
                                     icon: "clock"
                                 )
                             }

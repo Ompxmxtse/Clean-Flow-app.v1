@@ -84,6 +84,9 @@ struct CleaningStep: Codable, Identifiable {
 }
 
 extension CleaningProtocol {
+    // Computed property alias for views that use requiredDuration
+    var requiredDuration: TimeInterval { estimatedTime }
+
     static var mock: CleaningProtocol {
         CleaningProtocol(
             id: "protocol-1",
