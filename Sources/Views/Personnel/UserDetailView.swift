@@ -483,7 +483,7 @@ struct ActivityRow: View {
 }
 
 // MARK: - Data Models
-struct UserActivity: Identifiable {
+fileprivate struct UserActivity: Identifiable {
     let id: String
     let type: ActivityType
     let description: String

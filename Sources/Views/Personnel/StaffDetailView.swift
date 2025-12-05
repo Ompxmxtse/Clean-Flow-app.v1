@@ -421,6 +421,6 @@ struct StaffDetailView: View {
 
 // MARK: - Supporting Views
 #Preview {
-    StaffDetailView(user: (User.mock ?? User(id: "PREVIEW", name: "Preview User", email: "preview@example.com", role: .cleaner, department: "Preview", isActive: true, createdAt: Date(), lastLogin: Date()))) // Fallback to default preview user if User.mock is not available.
+    StaffDetailView(user: User.mock)
 }
 

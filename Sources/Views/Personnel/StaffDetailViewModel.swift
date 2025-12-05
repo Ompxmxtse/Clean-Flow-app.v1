@@ -110,7 +110,7 @@ class StaffDetailViewModel: ObservableObject {
 }
 
 // MARK: - User Activity Model
-struct UserActivity: Identifiable {
+fileprivate struct UserActivity: Identifiable {
     let id: String
     let type: ActivityType
     let description: String

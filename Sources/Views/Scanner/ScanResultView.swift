@@ -47,39 +47,39 @@ struct ScanResultView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
                             VStack(spacing: 12) {
-                                DetailRow(
+                                ScanDetailRow(
                                     title: "Scan Type",
                                     value: result.type == .qr ? "QR Code" : "NFC Tag",
                                     icon: result.type == .qr ? "qrcode" : "antenna.radiowaves.left.and.right"
                                 )
                                 
-                                DetailRow(
+                                ScanDetailRow(
                                     title: "Area ID",
                                     value: result.areaId,
                                     icon: "location"
                                 )
                                 
-                                DetailRow(
+                                ScanDetailRow(
                                     title: "Area Name",
                                     value: result.areaName,
                                     icon: "building.2"
                                 )
                                 
                                 if let protocolId = result.protocolId, let protocolName = result.protocolName {
-                                    DetailRow(
+                                    ScanDetailRow(
                                         title: "Protocol ID",
                                         value: protocolId,
                                         icon: "list.bullet.clipboard"
                                     )
                                     
-                                    DetailRow(
+                                    ScanDetailRow(
                                         title: "Protocol Name",
                                         value: protocolName,
                                         icon: "doc.text"
                                     )
                                 }
                                 
-                                DetailRow(
+                                ScanDetailRow(
                                     title: "Scan Time",
                                     value: formatTime(result.timestamp),
                                     icon: "clock"
@@ -175,7 +175,7 @@ struct ScanResultView: View {
     }
 }
 
-struct DetailRow: View {
+fileprivate struct ScanDetailRow: View {
     let title: String
     let value: String
     let icon: String

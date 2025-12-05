@@ -351,6 +351,6 @@ struct Area {
 }
 
 #Preview {
-    ProtocolDetailView(protocol: .mock)
+    ProtocolDetailView(cleaningProtocol: .mock)
         .environmentObject(AppState())
 }

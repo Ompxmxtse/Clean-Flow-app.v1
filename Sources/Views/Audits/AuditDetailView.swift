@@ -301,7 +301,7 @@ struct AuditDetailView: View {
 }
 
 // MARK: - Supporting Views
-struct DetailRow: View {
+fileprivate struct DetailRow: View {
     let icon: String
     let title: String
     let value: String
