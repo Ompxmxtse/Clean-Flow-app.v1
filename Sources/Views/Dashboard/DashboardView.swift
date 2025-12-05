@@ -285,7 +285,7 @@ struct CleaningRunRow: View {
         .glassCard()
     }
     
-    private func statusBadge(for status: CleaningRun.CleaningStatus) -> some View {
+    private func statusBadge(for status: CleaningStatus) -> some View {
         Text(status.rawValue.capitalized)
             .font(.caption2)
             .fontWeight(.medium)
@@ -296,7 +296,7 @@ struct CleaningRunRow: View {
             .clipShape(Capsule())
     }
     
-    private func statusColor(for status: CleaningRun.CleaningStatus) -> Color {
+    private func statusColor(for status: CleaningStatus) -> Color {
         switch status {
         case .completed, .verified: return .successGreen
         case .inProgress: return .neonAqua

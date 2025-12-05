@@ -437,7 +437,7 @@ enum StepAction {
 }
 
 #Preview {
-    StepChecklistView(protocol: .mock) { completedSteps, notes in
+    StepChecklistView(cleaningProtocol: .mock) { completedSteps, notes in
         // Preview callback
     }
 }
