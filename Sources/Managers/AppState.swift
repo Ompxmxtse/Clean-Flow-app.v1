@@ -147,10 +147,10 @@ class AppState: ObservableObject {
                     completedAt: nil,
                     completedBy: nil,
                     notes: nil,
-                    checklistItems: step.checklistItems.map { item in
+                    checklistItems: step.checklistItems.enumerated().map { index, itemText in
                         CompletedChecklistItem(
                             id: UUID().uuidString,
-                            item: item,
+                            item: ChecklistItem(id: "item-\(index)", text: itemText, isRequired: true),
                             completed: false,
                             completedAt: nil
                         )
