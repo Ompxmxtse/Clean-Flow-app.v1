@@ -437,12 +437,12 @@ struct AuditTimelineCard: View {
     }
 }
 
-// MARK: - Filter Chip
-struct FilterChip: View {
+// MARK: - Filter Chip (fileprivate to avoid conflict with PersonnelView.FilterChip)
+fileprivate struct AuditFilterChip: View {
     let title: String
     let isSelected: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             Text(title)
