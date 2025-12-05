@@ -109,37 +109,5 @@ class StaffDetailViewModel: ObservableObject {
     }
 }
 
-// MARK: - User Activity Model
-fileprivate struct UserActivity: Identifiable {
-    let id: String
-    let type: ActivityType
-    let description: String
-    let timestamp: Date
-    let areaName: String
-    
-    enum ActivityType {
-        case cleaningCompleted
-        case protocolStarted
-        case auditPassed
-        case auditFailed
-        case login
-    }
-    
-    var icon: String {
-        switch type {
-        case .cleaningCompleted: return "checkmark.circle.fill"
-        case .protocolStarted: return "play.circle.fill"
-        case .auditPassed: return "shield.checkered"
-        case .auditFailed: return "xmark.circle.fill"
-        case .login: return "person.crop.circle.badge.checkmark"
-        }
-    }
-    
-    var color: Color {
-        switch type {
-        case .cleaningCompleted, .auditPassed: return Color(red: 100/255, green: 255/255, blue: 100/255)
-        case .protocolStarted, .login: return Color(red: 43/255, green: 203/255, blue: 255/255)
-        case .auditFailed: return Color(red: 255/255, green: 100/255, blue: 100/255)
-        }
-    }
-}
+// NOTE: UserActivity is now defined in Sources/Models/UserActivity.swift
+// This avoids duplicate definitions and allows sharing across views
