@@ -193,17 +193,15 @@ struct CleaningRunWorkflow: View {
             createdAt: Date()
         )
         
-        FirestoreRepository.shared.saveCleaningRun(cleaningRun) { [weak self] result in
+        FirestoreRepository.shared.saveCleaningRun(cleaningRun) { result in
             DispatchQueue.main.async {
-                self?.isSubmitting = false
-                
+                isSubmitting = false
+
                 switch result {
                 case .success:
-                    self?.workflowState = .completed
-                    // Trigger haptic feedback
-                    let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-                    feedbackGenerator.impactOccurred()
-                case .failure(let error):
+                    workflowState = .completed
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                case .failure:
                     // Show error appropriately in production
                     break
                 }
