@@ -54,7 +54,7 @@ struct RegistrationView: View {
                                     .foregroundColor(.accentText)
                                 
                                 TextField("Enter your full name", text: $name)
-                                    .textFieldStyle(CleanFlowTextFieldStyle())
+                                    .cleanFlowTextField()
                             }
                             
                             // Email
@@ -64,7 +64,7 @@ struct RegistrationView: View {
                                     .foregroundColor(.accentText)
                                 
                                 TextField("Enter your email", text: $email)
-                                    .textFieldStyle(CleanFlowTextFieldStyle())
+                                    .cleanFlowTextField()
                                     .keyboardType(.emailAddress)
                                     .autocapitalization(.none)
                             }
@@ -76,7 +76,7 @@ struct RegistrationView: View {
                                     .foregroundColor(.accentText)
                                 
                                 TextField("Enter your department", text: $department)
-                                    .textFieldStyle(CleanFlowTextFieldStyle())
+                                    .cleanFlowTextField()
                             }
                             
                             // Role
@@ -118,7 +118,7 @@ struct RegistrationView: View {
                                     .foregroundColor(.accentText)
                                 
                                 SecureField("Enter your password", text: $password)
-                                    .textFieldStyle(CleanFlowTextFieldStyle())
+                                    .cleanFlowTextField()
                             }
                             
                             // Confirm Password
@@ -128,7 +128,7 @@ struct RegistrationView: View {
                                     .foregroundColor(.accentText)
                                 
                                 SecureField("Confirm your password", text: $confirmPassword)
-                                    .textFieldStyle(CleanFlowTextFieldStyle())
+                                    .cleanFlowTextField()
                             }
                         }
                         .padding()

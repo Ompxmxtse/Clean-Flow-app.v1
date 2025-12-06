@@ -13,7 +13,7 @@ class ScannerService: NSObject, ObservableObject {
 
     static let shared = ScannerService()
 
-    private var captureSession: AVCaptureSession?
+    private(set) var captureSession: AVCaptureSession?
     private var previewLayer: AVCaptureVideoPreviewLayer?
     private var qrCompletion: ((Result<String, ScannerError>) -> Void)?
     private var nfcCompletion: ((Result<String, ScannerError>) -> Void)?

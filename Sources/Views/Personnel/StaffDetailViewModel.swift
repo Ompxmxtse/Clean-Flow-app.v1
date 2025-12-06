@@ -86,25 +86,29 @@ class StaffDetailViewModel: ObservableObject {
                 .order(by: "completedAt", descending: true)
                 .limit(to: 10)
                 .getDocuments()
-            
-            recentActivity = runs.documents.compactMap { document in
-                guard let data = document.data() as? [String: Any],
-                      let completedAt = data["completedAt"] as? Timestamp,
+
+            let decoded: [UserActivity] = runs.documents.compactMap { document -> UserActivity? in
+                let data = document.data()
+                guard let completedAt = data["completedAt"] as? Timestamp,
                       let roomId = data["roomId"] as? String else {
                     return nil
                 }
-                
+
                 return UserActivity(
                     id: document.documentID,
+                    userId: user.id,
                     type: .cleaningCompleted,
-                    description: "Completed cleaning cycle",
+                    message: "Completed cleaning cycle",
                     timestamp: completedAt.dateValue(),
-                    areaName: "Room \(roomId.suffix(4))"
+                    relatedEntityId: roomId,
+                    relatedEntityType: "Room \(roomId.suffix(4))"
                 )
             }
-            
+
+            recentActivity = decoded
+
         } catch {
-            // Handle error appropriately in production
+            print("Failed to fetch recent activity: \(error)")
         }
     }
 }

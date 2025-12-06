@@ -10,7 +10,7 @@ struct ScannerView: View {
     var body: some View {
         ZStack {
             // Camera Preview
-            CameraPreview(scannerService: scannerService)
+            CameraPreview(session: scannerService.captureSession)
                 .ignoresSafeArea()
             
             // Overlay UI

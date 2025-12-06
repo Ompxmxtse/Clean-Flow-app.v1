@@ -3,238 +3,106 @@ import SwiftUI
 struct CleaningRunWorkflow: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var authService: AuthService
-    @State private var workflowState: WorkflowState = .scanning
-    @State private var scanResult: ScanResult?
-    @State private var selectedProtocol: CleaningProtocol?
-    @State private var completedSteps: Set<String> = []
-    @State private var stepNotes: [String: String] = [:]
-    @State private var showingSubmitConfirmation = false
-    @State private var isSubmitting = false
-    
-    enum WorkflowState {
-        case scanning
-        case protocolSelection
-        case activeProtocol
-        case review
-        case completed
-    }
+    @StateObject private var viewModel = CleaningRunWorkflowViewModel(authService: AuthService())
     
     var body: some View {
         NavigationView {
             ZStack {
-                // Background
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color.deepNavy,
-                        Color.black
-                    ]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .ignoresSafeArea()
-                
-                switch workflowState {
-                case .scanning:
-                    ScanningPhaseView { result in
-                        handleScanResult(result)
-                    }
-                    
-                case .protocolSelection:
-                    if let scanResult = scanResult {
-                        ProtocolSelectionPhaseView(
-                            scanResult: scanResult,
-                            protocols: appState.protocols
-                        ) { cleaningProtocol in
-                            startProtocol(cleaningProtocol)
-                        }
-                    }
-                    
-                case .activeProtocol:
-                    if let cleaningProtocol = selectedProtocol {
-                        ActiveProtocolPhaseView(
-                            cleaningProtocol: cleaningProtocol,
-                            scanResult: scanResult!,
-                            completedSteps: $completedSteps,
-                            stepNotes: $stepNotes
-                        ) {
-                            workflowState = .review
-                        }
-                    }
-                    
-                case .review:
-                    ReviewPhaseView(
-                        cleaningProtocol: selectedProtocol!,
-                        scanResult: scanResult!,
-                        completedSteps: completedSteps,
-                        stepNotes: stepNotes
-                    ) {
-                        showingSubmitConfirmation = true
-                    }
-                    
-                case .completed:
-                    CompletedPhaseView {
-                        resetWorkflow()
-                    }
-                }
+                backgroundGradient
+                workflowContent
             }
-            .navigationTitle(workflowTitle)
+            .navigationTitle(viewModel.workflowTitle)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    if workflowState != .scanning && workflowState != .completed {
-                        Button("Cancel") {
-                            resetWorkflow()
-                        }
-                        .foregroundColor(.accentText)
-                    }
-                }
-            }
+            .toolbar { cancelToolbarItem }
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .alert("Submit Cleaning Run", isPresented: $showingSubmitConfirmation) {
+        .alert("Submit Cleaning Run", isPresented: $viewModel.showingSubmitConfirmation) {
             Button("Submit", role: .destructive) {
-                submitCleaningRun()
+                viewModel.submitCleaningRun()
             }
-            .disabled(isSubmitting)
+            .disabled(viewModel.isSubmitting)
             Button("Cancel", role: .cancel) { }
         } message: {
             Text("Are you ready to submit this cleaning run? This action cannot be undone.")
         }
     }
-    
-    // MARK: - Workflow Properties
-    private var workflowTitle: String {
-        switch workflowState {
-        case .scanning: return "Start Cleaning"
-        case .protocolSelection: return "Select Protocol"
-        case .activeProtocol: return "Cleaning in Progress"
-        case .review: return "Review & Submit"
-        case .completed: return "Cleaning Complete"
-        }
-    }
-    
-    // MARK: - Workflow Actions
-    private func handleScanResult(_ result: ScanResult) {
-        scanResult = result
-        
-        if let protocolId = result.protocolId {
-            // Auto-select protocol if available
-            if let cleaningProtocol = appState.protocols.first(where: { $0.id == protocolId }) {
-                startProtocol(cleaningProtocol)
-            } else {
-                workflowState = .protocolSelection
-            }
-        } else {
-            workflowState = .protocolSelection
-        }
-    }
-    
-    private func startProtocol(_ cleaningProtocol: CleaningProtocol) {
-        selectedProtocol = cleaningProtocol
-        completedSteps = []
-        stepNotes = [:]
-        workflowState = .activeProtocol
-    }
-    
-    private func submitCleaningRun() {
-        guard let user = authService.currentUser,
-              let cleaningProtocol = selectedProtocol,
-              let scanResult = scanResult else { return }
-        
-        isSubmitting = true
-        
-        // Create exceptions for missed steps
-        let missedSteps = cleaningProtocol.steps.filter { !completedSteps.contains($0.id) }
-        let exceptions = missedSteps.map { step in
-            CleaningException(
-                id: UUID().uuidString,
-                stepId: step.id,
-                reason: stepNotes[step.id] ?? "Step not completed",
-                reportedAt: Date(),
-                reportedBy: user.name,
-                approvedBy: nil,
-                approvedAt: nil
-            )
-        }
-        
-        // Convert completedSteps Set<String> to [CompletedStep]
-        let completedStepObjects = cleaningProtocol.steps.filter { completedSteps.contains($0.id) }.map { step in
-            CompletedStep(
-                id: UUID().uuidString,
-                stepId: step.id,
-                name: step.name,
-                completed: true,
-                completedAt: Date(),
-                completedBy: user.name,
-                notes: stepNotes[step.id],
-                checklistItems: []
-            )
-        }
 
-        let cleaningRun = CleaningRun(
-            id: UUID().uuidString,
-            protocolId: cleaningProtocol.id,
-            protocolName: cleaningProtocol.name,
-            cleanerId: user.id,
-            cleanerName: user.name,
-            areaId: scanResult.areaId,
-            areaName: scanResult.areaName,
-            startTime: Date().addingTimeInterval(-Double(cleaningProtocol.steps.count * 300)),
-            endTime: Date(),
-            status: .completed,
-            verificationMethod: scanResult.type == .qr ? .qrCode : .nfc,
-            qrCode: scanResult.type == .qr ? "CF-AREA-\(scanResult.areaId)" : nil,
-            nfcTag: scanResult.type == .nfc ? "NFC-\(scanResult.areaId)" : nil,
-            steps: completedStepObjects,
-            notes: nil,
-            auditorId: nil,
-            auditorName: nil,
-            complianceScore: calculateComplianceScore(),
-            createdAt: Date()
+    // MARK: - Background
+
+    private var backgroundGradient: some View {
+        LinearGradient(
+            gradient: Gradient(colors: [Color.deepNavy, Color.black]),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
         )
-        
-        FirestoreRepository.shared.saveCleaningRun(cleaningRun) { [weak self] result in
-            DispatchQueue.main.async {
-                self?.isSubmitting = false
-                
-                switch result {
-                case .success:
-                    self?.workflowState = .completed
-                    // Trigger haptic feedback
-                    let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-                    feedbackGenerator.impactOccurred()
-                case .failure(let error):
-                    // Show error appropriately in production
-                    break
+        .ignoresSafeArea()
+    }
+
+    // MARK: - Workflow Content
+
+    @ViewBuilder
+    private var workflowContent: some View {
+        switch viewModel.workflowState {
+        case .scanning:
+            ScanningPhaseView { result in
+                viewModel.handleScanResult(result, availableProtocols: appState.protocols)
+            }
+
+        case .protocolSelection:
+            if let scanResult = viewModel.scanResult {
+                ProtocolSelectionPhaseView(
+                    scanResult: scanResult,
+                    protocols: appState.protocols
+                ) { cleaningProtocol in
+                    viewModel.startProtocol(cleaningProtocol)
                 }
             }
+
+        case .activeProtocol:
+            if let cleaningProtocol = viewModel.selectedProtocol,
+               let scanResult = viewModel.scanResult {
+                ActiveProtocolPhaseView(
+                    cleaningProtocol: cleaningProtocol,
+                    scanResult: scanResult,
+                    completedSteps: $viewModel.completedSteps,
+                    stepNotes: $viewModel.stepNotes
+                ) {
+                    viewModel.proceedToReview()
+                }
+            }
+
+        case .review:
+            if let cleaningProtocol = viewModel.selectedProtocol,
+               let scanResult = viewModel.scanResult {
+                ReviewPhaseView(
+                    cleaningProtocol: cleaningProtocol,
+                    scanResult: scanResult,
+                    completedSteps: viewModel.completedSteps,
+                    stepNotes: viewModel.stepNotes
+                ) {
+                    viewModel.confirmSubmit()
+                }
+            }
+
+        case .completed:
+            CompletedPhaseView {
+                viewModel.resetWorkflow()
+            }
         }
     }
-    
-    private func calculateComplianceScore() -> Double {
-        guard let cleaningProtocol = selectedProtocol else { return 0 }
-        
-        let completedCount = completedSteps.count
-        let totalCount = cleaningProtocol.steps.count
-        let requiredCount = cleaningProtocol.steps.filter { $0.required }.count
-        let completedRequiredCount = cleaningProtocol.steps.filter { step in
-            step.required && completedSteps.contains(step.id)
-        }.count
-        
-        // Score based on required steps completion
-        if requiredCount > 0 {
-            return (Double(completedRequiredCount) / Double(requiredCount)) * 100
-        } else {
-            return (Double(completedCount) / Double(totalCount)) * 100
+
+    // MARK: - Toolbar
+
+    @ToolbarContentBuilder
+    private var cancelToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarLeading) {
+            if viewModel.canCancel {
+                Button("Cancel") {
+                    viewModel.resetWorkflow()
+                }
+                .foregroundColor(.accentText)
+            }
         }
-    }
-    
-    private func resetWorkflow() {
-        workflowState = .scanning
-        scanResult = nil
-        selectedProtocol = nil
-        completedSteps = []
-        stepNotes = [:]
     }
 }
 
