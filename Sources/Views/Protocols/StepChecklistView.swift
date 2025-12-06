@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct StepChecklistView: View {
     let cleaningProtocol: CleaningProtocol
@@ -253,7 +254,7 @@ struct StepChecklistView: View {
         switch action {
         case .toggleComplete:
             completedSteps.insert(step.id)
-            impactFeedback(.medium)
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
         case .addNotes:
             showingNotesForStep = step
