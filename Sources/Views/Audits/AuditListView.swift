@@ -215,9 +215,11 @@ struct AuditListView: View {
     // MARK: - Audit List
 
     private var auditList: some View {
-        ScrollView {
+        let audits = viewModel.filteredAudits
+
+        return ScrollView {
             LazyVStack(spacing: 16) {
-                ForEach(viewModel.filteredAudits) { audit in
+                ForEach(audits) { audit in
                     AuditTimelineCard(audit: audit) {
                         selectedAudit = audit
                         showingAuditDetail = true
