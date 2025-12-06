@@ -60,7 +60,7 @@ struct PasswordResetView: View {
                                 .foregroundColor(.accentText)
                             
                             TextField("Enter your email", text: $email)
-                                .textFieldStyle(CleanFlowTextFieldStyle())
+                                .cleanFlowTextField()
                                 .keyboardType(.emailAddress)
                                 .autocapitalization(.none)
                         }

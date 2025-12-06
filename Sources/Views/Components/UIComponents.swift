@@ -2,18 +2,26 @@ import SwiftUI
 import AVFoundation
 
 // MARK: - CleanFlowTextFieldStyle
-// Custom text field style for auth views
-struct CleanFlowTextFieldStyle: TextFieldStyle {
-    func _body(configuration: TextField<Self._Label>) -> some View {
-        configuration
-            .padding()
-            .background(Color.white.opacity(0.1))
-            .cornerRadius(12)
-            .foregroundColor(.white)
+// Custom text field style for auth views using ViewModifier pattern
+struct CleanFlowTextFieldStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.white.opacity(0.1))
+            )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(Color.white.opacity(0.2), lineWidth: 1)
             )
+            .foregroundColor(.white)
+    }
+}
+
+extension View {
+    func cleanFlowTextField() -> some View {
+        modifier(CleanFlowTextFieldStyle())
     }
 }
 
@@ -114,6 +122,64 @@ struct StatCard: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                )
+        )
+    }
+}
+
+// MARK: - DashboardStatCard
+// Dashboard stat card with clear parameter labels
+struct DashboardStatCard: View {
+    let title: String
+    let value: String
+    let iconName: String
+    let iconColor: Color
+    let subtitle: String?
+
+    init(title: String, value: String, iconName: String, iconColor: Color, subtitle: String? = nil) {
+        self.title = title
+        self.value = value
+        self.iconName = iconName
+        self.iconColor = iconColor
+        self.subtitle = subtitle
+    }
+
+    var body: some View {
+        HStack {
+            Image(systemName: iconName)
+                .font(.system(size: 24))
+                .foregroundColor(iconColor)
+                .padding(12)
+                .background(
+                    Circle()
+                        .fill(iconColor.opacity(0.15))
+                )
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.subheadline)
+                    .foregroundColor(.secondaryText)
+
+                Text(value)
+                    .font(.title2.bold())
+                    .foregroundColor(.primaryText)
+
+                if let subtitle = subtitle {
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundColor(.secondaryText)
+                }
+            }
+
+            Spacer()
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.glassBackground)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.glassBorder, lineWidth: 1)
                 )
         )
     }
