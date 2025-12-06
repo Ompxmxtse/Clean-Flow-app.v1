@@ -356,14 +356,14 @@ struct UpcomingAuditRow: View {
 // MARK: - Data Models
 
 // Top-level AuditStatus for broader access
-enum AuditStatus: String, CaseIterable {
+enum AuditStatus: String, CaseIterable, Codable {
     case pending = "pending"
     case inProgress = "in_progress"
     case completed = "completed"
     case failed = "failed"
 }
 
-struct Audit: Identifiable {
+struct Audit: Identifiable, Codable {
     let id: String
     let cleaningRunId: String
     let auditorName: String
@@ -373,13 +373,46 @@ struct Audit: Identifiable {
     let findings: [String]
     let recommendations: [String]
     let createdAt: Date
-    let roomName: String  // Added for AuditListViewModel.uniqueRooms
+    let roomName: String
+    let exceptions: [String]
 
-    // Alias for views that use complianceScore
+    // MARK: - Computed Properties
+
     var complianceScore: Double { score }
+    var hasExceptions: Bool { !exceptions.isEmpty }
+    var exceptionCount: Int { exceptions.count }
 
-    // Convenience initializer with roomName default
-    init(id: String, cleaningRunId: String, auditorName: String, auditDate: Date, score: Double, status: AuditStatus, findings: [String], recommendations: [String], createdAt: Date, roomName: String = "") {
+    // MARK: - Coding Keys
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case cleaningRunId
+        case auditorName
+        case auditDate
+        case score = "complianceScore"
+        case status
+        case findings
+        case recommendations
+        case createdAt
+        case roomName
+        case exceptions
+    }
+
+    // MARK: - Initializers
+
+    init(
+        id: String,
+        cleaningRunId: String,
+        auditorName: String,
+        auditDate: Date,
+        score: Double,
+        status: AuditStatus,
+        findings: [String],
+        recommendations: [String],
+        createdAt: Date,
+        roomName: String = "",
+        exceptions: [String] = []
+    ) {
         self.id = id
         self.cleaningRunId = cleaningRunId
         self.auditorName = auditorName
@@ -390,6 +423,22 @@ struct Audit: Identifiable {
         self.recommendations = recommendations
         self.createdAt = createdAt
         self.roomName = roomName
+        self.exceptions = exceptions
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        cleaningRunId = try container.decodeIfPresent(String.self, forKey: .cleaningRunId) ?? ""
+        auditorName = try container.decodeIfPresent(String.self, forKey: .auditorName) ?? ""
+        auditDate = try container.decodeIfPresent(Date.self, forKey: .auditDate) ?? Date()
+        score = try container.decodeIfPresent(Double.self, forKey: .score) ?? 0.0
+        status = try container.decodeIfPresent(AuditStatus.self, forKey: .status) ?? .pending
+        findings = try container.decodeIfPresent([String].self, forKey: .findings) ?? []
+        recommendations = try container.decodeIfPresent([String].self, forKey: .recommendations) ?? []
+        createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt) ?? Date()
+        roomName = try container.decodeIfPresent(String.self, forKey: .roomName) ?? ""
+        exceptions = try container.decodeIfPresent([String].self, forKey: .exceptions) ?? []
     }
 }
 
